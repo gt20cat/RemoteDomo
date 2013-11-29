@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RemoteDomo</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_edit_device">EditDeviceActivity</string>
+    <string name="company_logo">RemoteDomo</string>
+    <string name="WelcomeText">Welcome to RemoteDomo</string>
+    <string name="deviceName">Device Name</string>
+    <string name="host">Host</string>
+    <string name="user">User</string>
+    <string name="password">Password</string>
+    <string name="save">Save</string>
+    <string name="login_progress_autenticacion">Connecting</string>
+    <string name="error_required_field">Required field</string>
+    <string name="error_value_zero">Value can not be zero</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="add_new_device">Add more OD devices?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="alerts_title">Alerts</string>
+
+</resources>
