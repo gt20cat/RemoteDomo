@@ -171,7 +171,7 @@ public final class R {
         public static final int ic_launcher=0x7f020005;
     }
     public static final class id {
-        public static final int action_settings=0x7f09000b;
+        public static final int action_settings=0x7f09000c;
         public static final int button_accept=0x7f090007;
         public static final int edit_devicename=0x7f090003;
         public static final int edit_host=0x7f090004;
@@ -183,16 +183,19 @@ public final class R {
         public static final int selection=0x7f090009;
         public static final int selection2=0x7f090008;
         public static final int textView1=0x7f09000a;
+        public static final int webView1=0x7f09000b;
     }
     public static final class layout {
         public static final int activity_edit_device=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int activity_splash=0x7f030002;
+        public static final int activity_web_view=0x7f030003;
     }
     public static final class menu {
         public static final int edit_device=0x7f080000;
         public static final int main=0x7f080001;
         public static final int splash=0x7f080002;
+        public static final int web_view=0x7f080003;
     }
     public static final class string {
         public static final int WelcomeText=0x7f060004;
@@ -212,6 +215,7 @@ public final class R {
         public static final int save=0x7f060009;
         public static final int title_activity_edit_device=0x7f060002;
         public static final int title_activity_main=0x7f06000d;
+        public static final int title_activity_web_view=0x7f060012;
         public static final int user=0x7f060007;
     }
     public static final class style {

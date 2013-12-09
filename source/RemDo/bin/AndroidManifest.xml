@@ -4,6 +4,8 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+     <uses-permission android:name="android.permission.INTERNET" />
+    
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -29,6 +31,10 @@
         <activity
             android:name="com.example.remdo.MainActivity"
             android:label="@string/title_activity_main" >
+        </activity>
+        <activity
+            android:name="com.example.remdo.WebViewActivity"
+            android:label="@string/title_activity_web_view" >
         </activity>
     </application>
 

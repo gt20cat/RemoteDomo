@@ -20,6 +20,7 @@ package com.example.remdo;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 
 public class MainActivity extends ListActivity {
 
+	public final static String DEVICE_URL = "";
 	TextView selection;
 	public int idToModify; 
 	DataManipulator dm;
@@ -67,14 +69,25 @@ public class MainActivity extends ListActivity {
 	}
 	
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		selection.setText(stg1[position]);
+		//selection.setText(stg1[position]);
+		openWebView(stg1[position]);
 	}
 
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	public void openWebView(String device) {
+		Intent intent = new Intent(this, WebViewActivity.class);
+		
+		// Device device = = dm.selectDevice();
+		
+		
+		String uri ="http://172.25.1.84";
+		intent.putExtra(DEVICE_URL, uri);
+		startActivity(intent);
 	}
 
 }
