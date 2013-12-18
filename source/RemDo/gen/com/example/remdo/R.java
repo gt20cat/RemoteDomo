@@ -200,22 +200,24 @@ public final class R {
     public static final class string {
         public static final int WelcomeText=0x7f060004;
         public static final int action_settings=0x7f060001;
-        public static final int add_new_device=0x7f06000e;
-        public static final int alerts_title=0x7f060011;
+        public static final int add_new_device=0x7f06000f;
+        public static final int alerts_title=0x7f060012;
         public static final int app_name=0x7f060000;
-        public static final int cancel=0x7f060010;
+        public static final int cancel=0x7f060011;
         public static final int company_logo=0x7f060003;
         public static final int deviceName=0x7f060005;
+        public static final int error_existing_device=0x7f06000c;
+        public static final int error_invalid_url=0x7f060014;
         public static final int error_required_field=0x7f06000b;
-        public static final int error_value_zero=0x7f06000c;
+        public static final int error_value_zero=0x7f06000d;
         public static final int host=0x7f060006;
         public static final int login_progress_autenticacion=0x7f06000a;
-        public static final int ok=0x7f06000f;
+        public static final int ok=0x7f060010;
         public static final int password=0x7f060008;
         public static final int save=0x7f060009;
         public static final int title_activity_edit_device=0x7f060002;
-        public static final int title_activity_main=0x7f06000d;
-        public static final int title_activity_web_view=0x7f060012;
+        public static final int title_activity_main=0x7f06000e;
+        public static final int title_activity_web_view=0x7f060013;
         public static final int user=0x7f060007;
     }
     public static final class style {

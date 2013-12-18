@@ -43,22 +43,28 @@ public class MainActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		dm = new DataManipulator(this);
-	      names2 = dm.selectAll();
-
-		stg1=new String[names2.size()]; 
-
-		int x=0;
-		String stg;
-
-		for (String[] name : names2) {
-			stg = name[1]+" - "+name[2]+ " - "+name[3]+" - "+name[4];
-
-			stg1[x]=stg;
-			x++;
+		try
+		{
+			dm = new DataManipulator(this);
+		      names2 = dm.selectAll();
+	
+			stg1=new String[names2.size()]; 
+	
+			int x=0;
+			String stg;
+	
+			for (String[] name : names2) {
+				stg = name[1];
+	
+				stg1[x]=stg;
+				x++;
+			}
 		}
-		
+		catch(Exception ex)
+		{
+			String aux = ex.getMessage();
+			
+		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(   
 				this,android.R.layout.simple_list_item_1,   
 				stg1);
@@ -70,7 +76,11 @@ public class MainActivity extends ListActivity {
 	
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		//selection.setText(stg1[position]);
-		openWebView(stg1[position]);
+		
+		dm = new DataManipulator(this);
+	      String deviceUri = dm.setURIbyName(stg1[position]);
+		
+		openWebView(deviceUri);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,14 +89,12 @@ public class MainActivity extends ListActivity {
 		return true;
 	}
 	
-	public void openWebView(String device) {
+	public void openWebView(String pDeviceUri) {
 		Intent intent = new Intent(this, WebViewActivity.class);
 		
 		// Device device = = dm.selectDevice();
 		
-		
-		String uri ="http://172.25.1.84";
-		intent.putExtra(DEVICE_URL, uri);
+		intent.putExtra(DEVICE_URL, pDeviceUri);
 		startActivity(intent);
 	}
 

@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.webkit.URLUtil;
 
 
 
@@ -62,7 +63,7 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 		mHostView = (EditText) findViewById(R.id.edit_host);
 		mUserView = (EditText) findViewById(R.id.edit_user);
 		mPasswordView = (EditText) findViewById(R.id.edit_password);
-
+		this.dh = new DataManipulator(this);
 
 		
 		/*Codigo comentado, es mejor hacer qye la clase implements OnClickListener
@@ -90,27 +91,38 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 				String myEditText3=((TextView) editText3).getText().toString();
 				String myEditText4=((TextView) editText4).getText().toString();
 	
-				this.dh = new DataManipulator(this);
+			try
+			{
+				//this.dh = new DataManipulator(this);
 				this.dh.insert(myEditText1,myEditText2,myEditText3,myEditText4);
-	
+			}
+			
+			catch(Exception ex)
+			{
+
+			}
+
 	
 	            break;
 	
 			}
 			DialogFragment  newdialog = new AddNewDeviceFragment();
 			newdialog.show(getSupportFragmentManager(), "newdevice");
-					
-			//showDialog(DIALOG_ID);
+				
 		}
 	} 
 
-	@Override
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.edit_device, menu);
 		return true;
 	}
 	
+	/**
+	 * Check if fields match defined rules and if deviceName or url already exist
+	 * @return
+	 */
 	public boolean checkFields() {
 		
 		mDeviceName = mDeviceNameView.getText().toString();
@@ -121,17 +133,35 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 		boolean cancel = false;
 		View focusView = null;
 		
-		
-		// check server field
+		// check device name field
 		if (TextUtils.isEmpty(mDeviceName)) {
 			mDeviceNameView.setError(getString(R.string.error_required_field));
 			focusView = mDeviceNameView;
 			cancel = true;
 		}
+		if (dh.exists(mDeviceName,"name")) {
+			mHostView.setError(getString(R.string.error_existing_device));
+			if (!cancel) {
+				focusView = mHostView;
+				cancel = true;
+			}
+		}
 		
 		// check server field
 		if (TextUtils.isEmpty(mHost)) {
 			mHostView.setError(getString(R.string.error_required_field));
+			if (!cancel) {
+				focusView = mHostView;
+				cancel = true;
+			}
+		}
+		if (!URLUtil.isValidUrl(mHost)){
+			mHostView.setError(getString(R.string.error_invalid_url));
+			focusView = mHostView;
+			cancel = true;
+		}
+		if (dh.exists(mHost,"host")) {
+			mHostView.setError(getString(R.string.error_existing_device));
 			if (!cancel) {
 				focusView = mHostView;
 				cancel = true;
@@ -157,7 +187,7 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 		} 
 		
 		if (cancel) {
-			// Si se produce un error no realizamos el login
+			// on error do not save the device
 			focusView.requestFocus();
 			return false;
 		} else {
@@ -179,38 +209,4 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 			startActivity(intent);
 		}
     }
-	
-	
-/*	protected final Dialog onCreateDialog(final int id) {
-		Dialog dialog = null;
-		switch(id) {
-		case DIALOG_ID:
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("Information saved successfully ! Add Another Info?")
-			.setCancelable(false)
-			.setPositiveButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					EditDeviceActivity.this.finish();
-
-              }
-			})
-			.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			});
-			AlertDialog alert = builder.create(); 
-			dialog = alert;
-			break;
-
-		default:
-
-		}
-		return dialog;
-	}*/
-
-
-	
-	
-
 }

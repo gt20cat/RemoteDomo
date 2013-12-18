@@ -13,6 +13,7 @@
     <string name="save">Save</string>
     <string name="login_progress_autenticacion">Connecting</string>
     <string name="error_required_field">Required field</string>
+    <string name="error_existing_device">Existing Device</string>
     <string name="error_value_zero">Value can not be zero</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="add_new_device">Add more OD devices?</string>
@@ -20,6 +21,7 @@
     <string name="cancel">Cancel</string>
     <string name="alerts_title">Alerts</string>
     <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="error_invalid_url">URL is invalid</string>
     
 
 </resources>

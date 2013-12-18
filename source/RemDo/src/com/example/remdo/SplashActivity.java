@@ -27,18 +27,25 @@ import android.view.Menu;
 public class SplashActivity extends Activity {
 
     private final int SPLASH_DISPLAY_LENGHT = 1000;
+	private DataManipulator dh;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash);
-
-
+		this.dh = new DataManipulator(this);
+		
         new Handler().postDelayed(new Runnable(){
         	
-			@Override
             public void run() {
-            	gotoDeviceConfig();
+            	if (!dh.hasDevices())
+            	{
+            		gotoDeviceConfig();
+            	}
+            	else
+            	{
+            		gotoMainActivity();
+            	}
             }
         }, SPLASH_DISPLAY_LENGHT);
 		
@@ -51,10 +58,13 @@ public class SplashActivity extends Activity {
 		return true;
 	}
 
-
-	
 	public void gotoDeviceConfig() {
 		Intent intent = new Intent(this, EditDeviceActivity.class);
+		startActivity(intent);
+	}
+	
+	public void gotoMainActivity() {
+		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
 	}
 }

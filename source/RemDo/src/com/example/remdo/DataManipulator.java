@@ -28,14 +28,14 @@ import java.util.List;
 public class DataManipulator {
 		private static final  String DATABASE_NAME = "RemoteDomo.db";
 		private static final int DATABASE_VERSION = 1;
-		static final String TABLE_NAME = "devices";
+		static final String T_DEVICES = "devices";
 		private static Context context;
 		static SQLiteDatabase db;
 
 		private SQLiteStatement insertStmt;
 		
 	    private static final String INSERT = "insert into "
-			+ TABLE_NAME + " (name,url,usr,pwd) values (?,?,?,?)";
+			+ T_DEVICES + " (name,url,usr,pwd) values (?,?,?,?)";
 	    
 	    
 		public DataManipulator(Context context) {
@@ -54,14 +54,14 @@ public class DataManipulator {
 		}
 	    
 		public void deleteAll() {
-			db.delete(TABLE_NAME, null, null);
+			db.delete(T_DEVICES, null, null);
 		}
 	    
 		public List<String[]> selectAll()
 		{
 
 			List<String[]> list = new ArrayList<String[]>();
-			Cursor cursor = db.query(TABLE_NAME, new String[] { "id","name","url","usr","pwd" },
+			Cursor cursor = db.query(T_DEVICES, new String[] { "id","name","url","usr","pwd","location" },
 					null, null, null, null, "name asc"); 
 
 			int x=0;
@@ -81,9 +81,41 @@ public class DataManipulator {
 
 			return list;
 		}
-	    
+		
+		
+		/**
+		 * Look into database for existing devices
+		 * @param mHost contains the key to be searched in the device database
+		 * @param string contain the field to look for could be "host" or name
+		 * @return true if device exists, false if device does not exists
+		 */
+		public boolean exists(String mHost, String string) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		
+		public String setURIbyName(String pDeviceName)
+		{
+			String uri = "Error";
+			String[] tableColumns = new String[] { "url"};
+			String whereClause = "name = ?";
+			String[] whereArgs = new String[] {pDeviceName};
+					
+			Cursor cursor = db.query(T_DEVICES, tableColumns, whereClause, whereArgs,
+			        null, null,null);
+			
+			int count = cursor.getCount();
+			if (count>0){
+		        cursor.moveToFirst();
+		        uri = cursor.getString(cursor.getColumnIndex("url"));
+		    }
+			return uri;
+			
+		}
+
 		public void delete(int rowId) {
-			db.delete(TABLE_NAME, null, null); 
+			db.delete(T_DEVICES, null, null); 
 		}
 	    
 		private static class OpenHelper extends SQLiteOpenHelper {
@@ -94,13 +126,28 @@ public class DataManipulator {
 
 			@Override
 			public void onCreate(SQLiteDatabase db) {
-				db.execSQL("CREATE TABLE " + TABLE_NAME + " (id INTEGER PRIMARY KEY, name TEXT, url TEXT, usr TEXT, pwd TEXT)");
+				db.execSQL("CREATE TABLE " + T_DEVICES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, url TEXT not null unique, usr TEXT, pwd TEXT,location TEXT)");
 			}
 
 			@Override
 			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+				db.execSQL("DROP TABLE IF EXISTS " + T_DEVICES);
 				onCreate(db);
 			}
 		}
+		
+		/**
+		 * To query table devices in database to know if it is empty or not
+		 * @return false if empty, true if at least there is one device in devices table
+		 */
+		public boolean hasDevices() {
+
+			Cursor c = db.query(T_DEVICES, null, null, null, null, null, null);
+			int result = c.getCount();
+			c.close();
+			
+			if (result > 0) return true;
+			else			return false;
+		}
+		
 	}
