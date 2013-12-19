@@ -12,6 +12,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EncodingUtils;
 import org.apache.http.util.EntityUtils;
 
 import android.os.Bundle;
@@ -31,30 +32,22 @@ public class WebViewActivity extends Activity {
 	    // Get the uri from the intent
 	    Intent intent = getIntent();
 	    String uriToDisplay = intent.getStringExtra(MainActivity.DEVICE_URL);
+	    String usr = intent.getStringExtra(MainActivity.DEVICE_USER);
+	    String pwd = intent.getStringExtra(MainActivity.DEVICE_PASSWORD);
 		
+	    if (!uriToDisplay.contains("cgi-bin/od.cgi"))
+	    {
+	    	uriToDisplay = uriToDisplay.concat("/cgi-bin/od.cgi");
+	    }
+	    
 		webView = (WebView) findViewById(R.id.webView1);
-		//webView.getSettings().setJavaScriptEnabled(true);
-		//webView.loadUrl(uriToDisplay);
-		
-		
-	    HttpClient httpclient = new DefaultHttpClient();
-	    //HttpPost httppost = new HttpPost("http://a_site.com/logintest.aspx");
-	    HttpPost httppost = new HttpPost(uriToDisplay);
-
 	    try {
-	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-	        nameValuePairs.add(new BasicNameValuePair("txtUsername", "admin"));
-	        nameValuePairs.add(new BasicNameValuePair("txtPassword", "opendomo"));
-	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-	        HttpResponse response = httpclient.execute(httppost);
-	        String responseAsText = EntityUtils.toString(response.getEntity());
-	        webView.loadUrl(responseAsText);
-
-	    } catch (ClientProtocolException e) {
-
-	    } catch (IOException e) {
-
+	        
+	        byte[] post = EncodingUtils.getBytes("USERNAME=" + usr + "&PASSWORD="+ pwd , "BASE64");
+	        webView.postUrl(uriToDisplay, post);
+	        
+	    }catch (Exception e) {
+	    	String message = e.getMessage();
 	    }
 		
 

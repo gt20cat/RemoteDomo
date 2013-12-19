@@ -32,6 +32,8 @@ import android.widget.TextView;
 public class MainActivity extends ListActivity {
 
 	public final static String DEVICE_URL = "";
+	public final static String DEVICE_USER = "";
+	public final static String DEVICE_PASSWORD = "";
 	TextView selection;
 	public int idToModify; 
 	DataManipulator dm;
@@ -76,11 +78,8 @@ public class MainActivity extends ListActivity {
 	
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		//selection.setText(stg1[position]);
-		
-		dm = new DataManipulator(this);
-	      String deviceUri = dm.setURIbyName(stg1[position]);
-		
-		openWebView(deviceUri);
+			
+		openWebView(stg1[position]);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,12 +88,14 @@ public class MainActivity extends ListActivity {
 		return true;
 	}
 	
-	public void openWebView(String pDeviceUri) {
+	public void openWebView(String pDeviceName) {
 		Intent intent = new Intent(this, WebViewActivity.class);
 		
-		// Device device = = dm.selectDevice();
+		dm = new DataManipulator(this);
 		
-		intent.putExtra(DEVICE_URL, pDeviceUri);
+		intent.putExtra(DEVICE_URL, dm.getParamByName(pDeviceName,"url"));
+		intent.putExtra(DEVICE_USER, dm.getParamByName(pDeviceName,"usr"));
+		intent.putExtra(DEVICE_PASSWORD, dm.getParamByName(pDeviceName,"pwd"));
 		startActivity(intent);
 	}
 

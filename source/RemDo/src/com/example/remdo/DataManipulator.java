@@ -94,8 +94,26 @@ public class DataManipulator {
 			return false;
 		}
 		
+		public String getParamByName(String pDeviceName,String param)
+		{
+			String uri = "Error";
+			String[] tableColumns = new String[] { param};
+			String whereClause = "name = ?";
+			String[] whereArgs = new String[] {pDeviceName};
+					
+			Cursor cursor = db.query(T_DEVICES, tableColumns, whereClause, whereArgs,
+			        null, null,null);
+			
+			int count = cursor.getCount();
+			if (count>0){
+		        cursor.moveToFirst();
+		        uri = cursor.getString(cursor.getColumnIndex(param));
+		    }
+			return uri;
+			
+		}
 		
-		public String setURIbyName(String pDeviceName)
+		public String getURIbyName(String pDeviceName)
 		{
 			String uri = "Error";
 			String[] tableColumns = new String[] { "url"};
@@ -109,6 +127,44 @@ public class DataManipulator {
 			if (count>0){
 		        cursor.moveToFirst();
 		        uri = cursor.getString(cursor.getColumnIndex("url"));
+		    }
+			return uri;
+			
+		}
+		
+		public String getpwdbyName(String pDeviceName)
+		{
+			String uri = "Error";
+			String[] tableColumns = new String[] { "pwd"};
+			String whereClause = "name = ?";
+			String[] whereArgs = new String[] {pDeviceName};
+					
+			Cursor cursor = db.query(T_DEVICES, tableColumns, whereClause, whereArgs,
+			        null, null,null);
+			
+			int count = cursor.getCount();
+			if (count>0){
+		        cursor.moveToFirst();
+		        uri = cursor.getString(cursor.getColumnIndex("pwd"));
+		    }
+			return uri;
+			
+		}
+		
+		public String getusrbyName(String pDeviceName)
+		{
+			String uri = "Error";
+			String[] tableColumns = new String[] { "usr"};
+			String whereClause = "name = ?";
+			String[] whereArgs = new String[] {pDeviceName};
+					
+			Cursor cursor = db.query(T_DEVICES, tableColumns, whereClause, whereArgs,
+			        null, null,null);
+			
+			int count = cursor.getCount();
+			if (count>0){
+		        cursor.moveToFirst();
+		        uri = cursor.getString(cursor.getColumnIndex("usr"));
 		    }
 			return uri;
 			
