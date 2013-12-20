@@ -93,9 +93,13 @@ public class MainActivity extends ListActivity {
 		
 		dm = new DataManipulator(this);
 		
-		intent.putExtra(DEVICE_URL, dm.getParamByName(pDeviceName,"url"));
-		intent.putExtra(DEVICE_USER, dm.getParamByName(pDeviceName,"usr"));
-		intent.putExtra(DEVICE_PASSWORD, dm.getParamByName(pDeviceName,"pwd"));
+		String url = dm.getParamByName(pDeviceName,"url");
+		String usr = dm.getParamByName(pDeviceName,"usr");
+		String pwd = dm.getParamByName(pDeviceName,"pwd");
+		
+		intent.putExtra("DEVICE_URL", url);
+		intent.putExtra("DEVICE_USER", usr);
+		intent.putExtra("DEVICE_PASSWORD", pwd);
 		startActivity(intent);
 	}
 

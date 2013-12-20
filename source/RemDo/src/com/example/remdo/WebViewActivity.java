@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class WebViewActivity extends Activity {
 
@@ -31,16 +32,21 @@ public class WebViewActivity extends Activity {
 		
 	    // Get the uri from the intent
 	    Intent intent = getIntent();
-	    String uriToDisplay = intent.getStringExtra(MainActivity.DEVICE_URL);
-	    String usr = intent.getStringExtra(MainActivity.DEVICE_USER);
-	    String pwd = intent.getStringExtra(MainActivity.DEVICE_PASSWORD);
+	    String uriToDisplay = intent.getStringExtra("DEVICE_URL");
+	    String usr = intent.getStringExtra("DEVICE_USER");
+	    String pwd = intent.getStringExtra("DEVICE_PASSWORD");
 		
 	    if (!uriToDisplay.contains("cgi-bin/od.cgi"))
 	    {
 	    	uriToDisplay = uriToDisplay.concat("/cgi-bin/od.cgi");
 	    }
 	    
+	    //initialize WebView
 		webView = (WebView) findViewById(R.id.webView1);
+		//we should define a webview client to get user navigation inside our webview otherwise 
+		//defaul behaviour will open a webbrowser on first click
+		webView.setWebViewClient(new WebViewClient());
+		
 	    try {
 	        
 	        byte[] post = EncodingUtils.getBytes("USERNAME=" + usr + "&PASSWORD="+ pwd , "BASE64");
