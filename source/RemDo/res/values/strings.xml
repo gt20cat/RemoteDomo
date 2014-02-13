@@ -22,6 +22,11 @@
     <string name="alerts_title">Alerts</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="error_invalid_url">URL is invalid</string>
-    
+    <string name="delete">Delete</string>
+    <string name="update">Update</string>
+    <string name="edit">Edit</string>
+    <string name="new_device">New Device</string>
+    <string name="footer">Footer</string>
+    <string name="delete_warning">Yoo really want to delete the device?</string>
 
 </resources>

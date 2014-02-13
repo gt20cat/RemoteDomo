@@ -4,84 +4,91 @@
     tools:context=".EditDeviceActivity" >
 
     <!-- Login progress -->
-    
-   <LinearLayout android:id="@+id/login_status"
+
+    <LinearLayout
+        android:id="@+id/login_status"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"       
+        android:layout_height="wrap_content"
+        android:background="@drawable/background"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"        
-        android:background="@drawable/background">
-        
-      
-	</LinearLayout>
+        android:visibility="gone" >
+    </LinearLayout>
 
     <!-- Login form -->
-  
-	<ScrollView android:id="@+id/login_form"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="vertical"
-	    android:paddingLeft="20dip"
-	    android:paddingRight="20dip"
-	    android:background="@drawable/background"
-	    android:scrollbars="none" >
-	    
-	    <LinearLayout
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical" >
-		    
-		    <ImageView android:id="@+id/image_logo_company"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_company_logo"
-				android:adjustViewBounds="true"
-				android:contentDescription="@string/company_logo"
-				android:layout_marginTop="25dip" />
-		    
-		    <EditText android:id="@+id/edit_devicename"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:hint="@string/deviceName" 
-				android:inputType="textUri"
-				android:layout_marginTop="25dip"
-				android:padding="4dip"
-				android:background="@drawable/edittext_rounded_corners" />  
-		    
-			<EditText android:id="@+id/edit_host"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:hint="@string/host" 
-				android:inputType="textUri"
-				android:layout_marginTop="25dip"
-				android:padding="4dip"
-				android:background="@drawable/edittext_rounded_corners" />        
-		    
-		    <EditText android:id="@+id/edit_user"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:hint="@string/user"
-				android:inputType="text"
-				android:layout_marginTop="25dip"
-				android:padding="4dip"
-				android:background="@drawable/edittext_rounded_corners" />  
-		    
-		    <EditText android:id="@+id/edit_password"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:hint="@string/password"
-				android:inputType="textPassword"
-				android:layout_marginTop="25dip"
-				android:padding="4dip"
-				android:background="@drawable/edittext_rounded_corners" />
-		    
-		    <Button android:id="@+id/button_accept"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:text="@string/save"
-				android:layout_marginTop="30dip" 
-				android:background="@drawable/button_rounded_corners" />			    
-		</LinearLayout>
-	</ScrollView>
+
+    <ScrollView
+        android:id="@+id/login_form"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/background"
+        android:orientation="vertical"
+        android:paddingLeft="20dip"
+        android:paddingRight="20dip"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/image_logo_company"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dip"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/company_logo"
+                android:src="@drawable/ic_company_logo" />
+
+            <EditText
+                android:id="@+id/edit_devicename"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dip"
+                android:background="@drawable/edittext_rounded_corners"
+                android:hint="@string/deviceName"
+                android:inputType="textUri"
+                android:padding="4dip" />
+
+            <EditText
+                android:id="@+id/edit_host"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dip"
+                android:background="@drawable/edittext_rounded_corners"
+                android:hint="@string/host"
+                android:inputType="textUri"
+                android:padding="4dip" />
+
+            <EditText
+                android:id="@+id/edit_user"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dip"
+                android:background="@drawable/edittext_rounded_corners"
+                android:hint="@string/user"
+                android:inputType="text"
+                android:padding="4dip" />
+
+            <EditText
+                android:id="@+id/edit_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dip"
+                android:background="@drawable/edittext_rounded_corners"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:padding="4dip" />
+
+            <Button
+                android:id="@+id/button_accept"
+                android:layout_width="fill_parent"
+                android:layout_height="40dip"
+                android:layout_marginTop="30dip"
+                android:background="@drawable/button_rounded_corners"
+                android:text="@string/save" />
+        </LinearLayout>
+    </ScrollView>
+
 </merge>

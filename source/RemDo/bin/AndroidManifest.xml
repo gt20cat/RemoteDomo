@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.remdo"
+    package="com.remdo.app"
     android:versionCode="1"
     android:versionName="1.0" >
 
-     <uses-permission android:name="android.permission.INTERNET" />
-    
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.remdo.SplashActivity"
+            android:name="com.remdo.app.SplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,15 +25,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.remdo.EditDeviceActivity"
+            android:name="com.remdo.app.EditDeviceActivity"
             android:label="@string/title_activity_edit_device" >
         </activity>
         <activity
-            android:name="com.example.remdo.MainActivity"
+            android:name="com.remdo.app.MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
         <activity
-            android:name="com.example.remdo.WebViewActivity"
+            android:name="com.remdo.app.WebViewActivity"
             android:label="@string/title_activity_web_view" >
         </activity>
     </application>
