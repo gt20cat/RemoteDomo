@@ -17,6 +17,9 @@
  * ************************************************************************/
 package com.remdo.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import remdo.sqlite.helper.DatabaseHelper;
 import remdo.sqlite.model.Device;
 
@@ -34,9 +37,14 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -44,7 +52,7 @@ import android.webkit.URLUtil;
 
 
 
-public class EditDeviceActivity extends FragmentActivity  implements OnClickListener {
+public class EditDeviceActivity extends FragmentActivity  implements OnItemSelectedListener, OnClickListener  {
 	private DatabaseHelper dh;     
 	
 	private String mDeviceName;
@@ -68,7 +76,7 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_device);
-		
+		this.dh = new DatabaseHelper(this);
 	    Intent intent = getIntent();
 	    Long deviceId = intent.getLongExtra("DEVICE_ID",-1);
 	    
@@ -78,31 +86,89 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 		mPasswordView = (EditText) findViewById(R.id.edit_password);
         Button save = (Button) findViewById(R.id.button_accept);
 		save.setOnClickListener(this);
-		
+		        
 	    if (deviceId == -1)
 	    {			
-			//Referencias UI
-			this.dh = new DatabaseHelper(this);
 			EditMode = false;
 			save.setText(R.string.save);
 	    }
 	    else
 	    {
-	    	//dm = new DatabaseHelper(this);
-	    	this.dh = new DatabaseHelper(this);
-			
 			currentDevice = dh.getDevicebyID(deviceId);
 			
 			mDeviceNameView.setText(currentDevice.name,TextView.BufferType.EDITABLE);
 			mHostView.setText(currentDevice.url,TextView.BufferType.EDITABLE);
 			mUserView.setText(currentDevice.usr,TextView.BufferType.EDITABLE);
-			mPasswordView.setText(currentDevice.usr,TextView.BufferType.EDITABLE);
+			mPasswordView.setText(currentDevice.pwd,TextView.BufferType.EDITABLE);
 			EditMode =  true;
 			save.setText(R.string.edit);
 	    }
+	    setsnniper();
 
+	}
+	
+    private void setsnniper() {
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        
+        // Spinner click listener
+        spinner.setOnItemSelectedListener((OnItemSelectedListener) this);
+        
+        // Spinner Drop down elements
+        List<String> categories = new ArrayList<String>();
+        
+        if(dh.ODNetworkExists())
+        {
+        	if(EditMode == true)
+        	{
+		        if(currentDevice.odType == 1)
+		        {
+		        	categories.add("ODNetwork");
+		        	categories.add("ODControl");
+		        }
+		        else
+		        {
+		        	categories.add("ODControl");
+		        }
+        	}
+        	else
+        	{
+        		categories.add("ODControl");
+        	}
+        }
+        else
+        {
+        	if(EditMode == true)
+        	{
+        		categories.add("ODControl");
+        		categories.add("ODNetwork");
+        	}
+        	else
+        	{
+		        categories.add("ODNetwork");
+		        categories.add("ODControl");
+        	}
+        }
+        
+		
+        // Creating adapter for spinner
+		ArrayAdapter<String> odTypesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+		
+		// Drop down layout style - list view with radio button
+		odTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		// attaching data adapter to spinner
+		spinner.setAdapter(odTypesAdapter);
+		//odTypesAdapter.setDropDownViewResource(currentDevice.odType);
+		
+	}
 
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		// On selecting a spinner item
+    	
+		String item = parent.getItemAtPosition(position).toString();
+		  
+		deviceType = dh.getODDeviceType(item).id;
 
+		
 	}
 	
 	public void onClick(View v){
@@ -264,4 +330,10 @@ public class EditDeviceActivity extends FragmentActivity  implements OnClickList
 			startActivity(intent);
 		}
     }
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

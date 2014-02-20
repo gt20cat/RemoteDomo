@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import remdo.sqlite.model.Device;
+import remdo.sqlite.model.OdDeviceTypes;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -92,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			SQLiteDatabase db = this.getReadableDatabase();
 			List<String[]> list = new ArrayList<String[]>();
 			Cursor cursor = db.query(T_DEVICES, new String[] { "id","name","url","usr","pwd","locationId","odTypeId" },
-					null, null, null, null, "name ASC"); 
+					null, null, null, null, "odTypeId ASC, name ASC"); 
 
 			int x=0;
 			if (cursor.moveToFirst()) {
@@ -248,6 +249,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 		
+		public boolean ODNetworkExists() {
+			
+			SQLiteDatabase db = this.getReadableDatabase();
+
+			String selectQuery = "SELECT  * FROM " + T_DEVICES + " WHERE "
+					+ "odTypeId = 1";
+
+			Cursor c = db.rawQuery(selectQuery, null);
+
+			if (c != null)
+			{
+				if (c.moveToFirst())
+				{
+					return true;					
+				}
+				else
+					return false;
+			}
+			else
+				return false;
+		}
+		
 		boolean tableExists(String tableName)
 		{
 			SQLiteDatabase db = this.getReadableDatabase();
@@ -273,7 +296,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL("CREATE TABLE " + T_ODDEVICETYPES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");	
 			db.execSQL("CREATE TABLE " + T_LOCATIONS + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");
 			
-			
+			db.execSQL("INSERT INTO " + T_ODDEVICETYPES + " (id, name, description) VALUES(1,'ODNetwork','')");
+			db.execSQL("INSERT INTO " + T_ODDEVICETYPES + " (id, name, description) VALUES(2,'ODControl','')");
+
 		}
 
 		@Override
@@ -338,6 +363,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			return db.update(T_DEVICES, values, "id = ?",	
 					new String[] { String.valueOf(device.id) });
 			
+		}
+
+		public OdDeviceTypes getODDeviceType(long id ) {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+
+			String selectQuery = "SELECT  * FROM " + T_ODDEVICETYPES + " WHERE "
+					+ "id" + " = " + id;
+
+			Cursor c = db.rawQuery(selectQuery, null);
+
+			if (c != null)
+				c.moveToFirst();
+
+			OdDeviceTypes devType = new OdDeviceTypes();
+			devType.id = c.getInt(c.getColumnIndex("id"));
+			devType.name = c.getString(c.getColumnIndex("name"));
+			devType.description = c.getString(c.getColumnIndex("description"));
+
+			return devType;
+		}
+		
+		public OdDeviceTypes getODDeviceType(String pName ) {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+
+			String selectQuery = "SELECT  * FROM " + T_ODDEVICETYPES + " WHERE "
+					+ "name" + " = '" + pName +"'";
+
+			Cursor c = db.rawQuery(selectQuery, null);
+
+			if (c != null)
+				c.moveToFirst();
+
+			OdDeviceTypes devType = new OdDeviceTypes();
+			devType.id = c.getInt(c.getColumnIndex("id"));
+			devType.name = c.getString(c.getColumnIndex("name"));
+			devType.description = c.getString(c.getColumnIndex("description"));
+
+			return devType;
 		}
 		
 	}

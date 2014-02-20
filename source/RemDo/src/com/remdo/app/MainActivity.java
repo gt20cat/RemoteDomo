@@ -116,6 +116,7 @@ public class MainActivity extends Activity {
 	}
 	
 
+	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		
@@ -133,10 +134,13 @@ public class MainActivity extends Activity {
 		String url = dm.getDeviceParamByName(pDeviceName,"url");
 		String usr = dm.getDeviceParamByName(pDeviceName,"usr");
 		String pwd = dm.getDeviceParamByName(pDeviceName,"pwd");
-		
+		String odTypeId = dm.getDeviceParamByName(pDeviceName,"odTypeId");
+
 		intent.putExtra("DEVICE_URL", url);
 		intent.putExtra("DEVICE_USER", usr);
 		intent.putExtra("DEVICE_PASSWORD", pwd);
+		intent.putExtra("DEVICE_ODTYPEID", Integer.parseInt(odTypeId));
+				
 		startActivity(intent);
 	}
 	

@@ -24,6 +24,7 @@ import com.remdo.app.R.string;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -41,6 +42,12 @@ public class AddNewDeviceFragment extends DialogFragment {
         builder.setMessage(R.string.add_new_device)
                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
+                	//clear all previous activities
+
+                	Intent intent = getActivity().getIntent();
+                	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                	startActivity(intent);
+
                		EditDeviceActivity callingActivity = (EditDeviceActivity) getActivity();
                     callingActivity.onUserSelectValue(true);
                    }

@@ -2,9 +2,9 @@ package remdo.sqlite.model;
 
 public class OdDeviceTypes {
 
-	int id;
-	String name;
-	String description;
+	public  int id;
+	public  String name;
+	public  String description;
 	
 	public OdDeviceTypes()
 	{

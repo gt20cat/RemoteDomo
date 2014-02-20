@@ -36,7 +36,7 @@
                 android:id="@+id/image_logo_company"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dip"
+                android:layout_marginTop="15dip"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/company_logo"
                 android:src="@drawable/ic_company_logo" />
@@ -45,7 +45,7 @@
                 android:id="@+id/edit_devicename"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dip"
+                android:layout_marginTop="15dip"
                 android:background="@drawable/edittext_rounded_corners"
                 android:hint="@string/deviceName"
                 android:inputType="textUri"
@@ -55,7 +55,7 @@
                 android:id="@+id/edit_host"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dip"
+                android:layout_marginTop="15dip"
                 android:background="@drawable/edittext_rounded_corners"
                 android:hint="@string/host"
                 android:inputType="textUri"
@@ -65,7 +65,7 @@
                 android:id="@+id/edit_user"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dip"
+                android:layout_marginTop="15dip"
                 android:background="@drawable/edittext_rounded_corners"
                 android:hint="@string/user"
                 android:inputType="text"
@@ -75,16 +75,23 @@
                 android:id="@+id/edit_password"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dip"
+                android:layout_marginTop="15dip"
                 android:background="@drawable/edittext_rounded_corners"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:padding="4dip" />
-
+			<Spinner 
+			        android:id="@+id/spinner"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="15dip"
+			        android:background="@drawable/snniped_rounded_corners"
+			        android:prompt="@string/select_device_type" />
+            
             <Button
                 android:id="@+id/button_accept"
                 android:layout_width="fill_parent"
-                android:layout_height="40dip"
+                android:layout_height="35dip"
                 android:layout_marginTop="30dip"
                 android:background="@drawable/button_rounded_corners"
                 android:text="@string/save" />
