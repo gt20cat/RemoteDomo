@@ -3,5 +3,8 @@
 		android:title="@string/edit" />
 	<item android:id="@+id/deleteOption"
 		android:title="@string/delete" />
+	<item android:id="@+id/newOption"
+		android:title="@string/new_device"/>
 </menu>
     
+

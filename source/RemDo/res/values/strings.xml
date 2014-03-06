@@ -11,6 +11,7 @@
     <string name="user">User</string>
     <string name="password">Password</string>
     <string name="save">Save</string>
+    <string name="minutes">Minutes</string>
     <string name="login_progress_autenticacion">Connecting</string>
     <string name="error_required_field">Required field</string>
     <string name="error_existing_device">Existing Device</string>
@@ -20,15 +21,30 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="alerts_title">Alerts</string>
+    <string name="geo_title">Geopositioning</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="error_invalid_url">URL is invalid</string>
     <string name="delete">Delete</string>
     <string name="update">Update</string>
     <string name="edit">Edit</string>
+    <string name="close">Close</string>
+    <string name="error">Error</string>
     <string name="new_device">Add New Device</string>
     <string name="footer">Footer</string>
     <string name="delete_warning">Do you really want to delete this device?</string>
     <string name="select_device_type">Select Device Type:</string>
+    <string name="geo_off">Geo OFF</string>
+    <string name="alerts_off">Alerts OFF</string>
+    <string name="geo_on">Geo ON</string>
+    <string name="gps_not_enabled">Please enable GPS to use this service.</string>
+    <string name="alerts_on">Alerts ON</string>
+    <string name="started_geo_service">GEO service started</string>
+    <string name="stopped_geo_service">GEO service stoped</string>
+    <string name="started_alerts_service">Alerts service started</string>
+    <string name="stopped_alerts_service">Alerts service stopped</string>
+    <string name="restart_service">Restart service</string>
+    <string name="configuration">Configuration</string>
+    <string name="service_config_message">Service should be restarted to apply new time configuration.</string>
     
 
 </resources>

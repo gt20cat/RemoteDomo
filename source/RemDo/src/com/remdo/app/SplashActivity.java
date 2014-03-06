@@ -30,6 +30,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import android.view.Menu;
+import android.view.Window;
 
 public class SplashActivity extends Activity {
 
@@ -39,6 +40,7 @@ public class SplashActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_splash);
 		this.dh = new DatabaseHelper(getApplicationContext());
 		
@@ -68,11 +70,13 @@ public class SplashActivity extends Activity {
 	public void gotoDeviceConfig() {
 		Intent intent = new Intent(this, EditDeviceActivity.class);
 		startActivity(intent);
+		finish();//close current activity, no longer usefully
 	}
 	
 	public void gotoMainActivity() {
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
+		finish();//close current activity, no longer usefully
 	}
 }
 

@@ -41,8 +41,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Base64;
 import android.view.Menu;
+import android.view.Window;
 import android.webkit.HttpAuthHandler;
 import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -52,6 +54,7 @@ public class WebViewActivity extends Activity {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_web_view);
 		
 	    // Get the uri from the intent
@@ -86,9 +89,10 @@ public class WebViewActivity extends Activity {
 	    else//ODControl
 	    {
 	    	webView = (WebView) findViewById(R.id.webView1);
-	    	//webView.setWebViewClient(new MyWebViewClient());
-		    //webView.setHttpAuthUsernamePassword(uriToDisplay, "/", "user@opendomo.com", "opendomo");
-	    	//webView.setWebChromeClient(new MyWebViewClient());
+	    	
+		    webView.setHttpAuthUsernamePassword(uriToDisplay, "/", "user@opendomo.com", "opendomo");
+	    	webView.setWebChromeClient(new WebChromeClient());
+	    	webView.setWebViewClient(new MyWebViewClient());
 	    	webView.getSettings().setJavaScriptEnabled(true);
 	    	webView.loadUrl("http://local.opendomo.com");
 

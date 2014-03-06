@@ -31,6 +31,7 @@ import java.util.List;
 
 import remdo.sqlite.model.Device;
 import remdo.sqlite.model.OdDeviceTypes;
+import remdo.sqlite.model.Service;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -39,6 +40,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		static final String T_DEVICES = "devices";
 		static final String T_LOCATIONS = "locations";
 		static final String T_ODDEVICETYPES = "odDeviceTypes";
+		static final String T_SERVICES = "services";
+		static final String T_EVENTS = "events";
 		private static Context context;
 		//static SQLiteDatabase db;
 
@@ -202,7 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		{
 			SQLiteDatabase db = this.getReadableDatabase();
 			
-			String uri = "Error";
+			String usr = "Error";
 			String[] tableColumns = new String[] { "usr"};
 			String whereClause = "name = ?";
 			String[] whereArgs = new String[] {pDeviceName};
@@ -213,11 +216,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			int count = cursor.getCount();
 			if (count>0){
 		        cursor.moveToFirst();
-		        uri = cursor.getString(cursor.getColumnIndex("usr"));
+		        usr = cursor.getString(cursor.getColumnIndex("usr"));
 		    }
-			return uri;
+			return usr;
 			
 		}
+		
 
 		public void deleteDevice(int deviceId) {
 			SQLiteDatabase db = this.getWritableDatabase();
@@ -295,9 +299,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL("CREATE TABLE " + T_DEVICES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, url TEXT not null unique, usr TEXT, pwd TEXT,locationId int, odTypeId int)");
 			db.execSQL("CREATE TABLE " + T_ODDEVICETYPES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");	
 			db.execSQL("CREATE TABLE " + T_LOCATIONS + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");
-			
+			db.execSQL("CREATE TABLE " + T_EVENTS + " (id INTEGER PRIMARY KEY, time TEXT not null, transmitter TEXT not null, type TEXT not null, message TEXT not null)");
+			db.execSQL("CREATE TABLE " + T_SERVICES + " (id INTEGER PRIMARY KEY, description TEXT not null, minutes int not null, locationId int not null)");
+
 			db.execSQL("INSERT INTO " + T_ODDEVICETYPES + " (id, name, description) VALUES(1,'ODNetwork','')");
 			db.execSQL("INSERT INTO " + T_ODDEVICETYPES + " (id, name, description) VALUES(2,'ODControl','')");
+			
+			db.execSQL("INSERT INTO " + T_SERVICES + " (id, description,minutes,locationId) VALUES(1,'Geo',15,0)");
+			db.execSQL("INSERT INTO " + T_SERVICES + " (id, description,minutes,locationId) VALUES(2,'Alerts',15,0)");
 
 		}
 
@@ -331,26 +340,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			dev.location = c.getInt(c.getColumnIndex("locationId"));
 			dev.odType = c.getInt(c.getColumnIndex("odTypeId"));
 
-			return dev;
+			return dev;	
+		}
+		
+		public Device getDevicebyDevType(int odDevType, int locationId) {
+			
+			SQLiteDatabase db = this.getReadableDatabase();
+
+			String selectQuery = "SELECT  * FROM " + T_DEVICES + " WHERE "
+					+ "odTypeId" + " = " + odDevType;
+
+			Cursor c = db.rawQuery(selectQuery, null);
+
+			if (c != null)
+				c.moveToFirst();
+			
+			Device dev = new Device();
+			dev.id = c.getInt(c.getColumnIndex("id"));
+			dev.name = c.getString(c.getColumnIndex("name"));
+			dev.url = c.getString(c.getColumnIndex("url"));
+			dev.usr = c.getString(c.getColumnIndex("usr"));
+			dev.pwd = c.getString(c.getColumnIndex("pwd"));
+			dev.location = c.getInt(c.getColumnIndex("locationId"));
+			dev.odType = c.getInt(c.getColumnIndex("odTypeId"));
+
+			return dev;	
 			
 		}
 
 		public int updateDevice(Device device) {
 
 			SQLiteDatabase db = this.getWritableDatabase();
-			
-			/*String selectQuery = "UPDATE " + T_DEVICES + 
-								" SET name = " + currentDevice.name +
-								", url = " + currentDevice.url +
-								", usr = " + currentDevice.usr +
-								", pwd = " + currentDevice.pwd +" WHERE " +
-								" id" + " = " + currentDevice.id;
-			
-			Cursor c = db.rawQuery(selectQuery, null);
-
-			if (c != null)
-				c.moveToFirst();*/
-					
+							
 			ContentValues values = new ContentValues();
 			values.put("name", device.name);
 			values.put("url", device.url);
@@ -404,5 +425,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			return devType;
 		}
+
+		public int updateServiceConfig(String servcieDesc, int minutes) {
+			
+			SQLiteDatabase db = this.getWritableDatabase();
+							
+			ContentValues values = new ContentValues();
+			values.put("minutes", minutes);
+
+			return db.update(T_SERVICES, values, "description = ?",	
+					new String[] { String.valueOf(servcieDesc) });
+			
+		}
+		
+		public int getServcieMinutes(String serviceDesc) {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+
+			String selectQuery = "SELECT  minutes FROM " + T_SERVICES + " WHERE "
+					+ "description" + " = '" + serviceDesc + "'";
+
+			Cursor c = db.rawQuery(selectQuery, null);
+
+			if (c != null)
+				c.moveToFirst();
+
+			return c.getInt(c.getColumnIndex("minutes"));
+
+		}
+
+
 		
 	}

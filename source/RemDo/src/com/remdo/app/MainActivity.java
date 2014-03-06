@@ -18,8 +18,10 @@
 package com.remdo.app;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import remdo.services.GeopositioningService;
 import com.remdo.app.R;
 import com.remdo.app.R.id;
 import com.remdo.app.R.layout;
@@ -31,17 +33,24 @@ import remdo.sqlite.model.*;
 import android.R.integer;
 import android.R.string;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -50,16 +59,26 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
 	public final static String DEVICE_URL = "";
 	public final static String DEVICE_USER = "";
 	public final static String DEVICE_PASSWORD = "";
 	public final static Long DEVICE_ID =(long) 0;
 	private  ArrayAdapter<String> adapter;
+	
+	private static boolean GeoEnabled = false;
+	private static int mGeoInterval;
+	//Mediante este PendingIntent controlaremos el servicio de geoposicionamiento
+	private static PendingIntent pendingIntent;
+	
+	private static boolean AlertsEnables = true;
 	ListView deviceList;
+	TextView GeoState;
+	TextView AlertsState;
 	public int idToModify; 
 	DatabaseHelper dm;
 	
@@ -70,6 +89,7 @@ public class MainActivity extends Activity {
 		
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		
 		try
@@ -102,28 +122,130 @@ public class MainActivity extends Activity {
 
         deviceList.setAdapter(adapter);
         deviceList.setOnItemClickListener(new OnItemClickListener(){
-        	
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long id) {
 				openWebView(devices[position]);
-				
 			}
-        	
         });
         registerForContextMenu(deviceList);
-		
-	}
-	
+        
+        checkServices();
+             
+        GeoState =(TextView)findViewById(R.id.tv_geo_footer);
+        registerForContextMenu(GeoState);
+        AlertsState =(TextView)findViewById(R.id.tv_alerts_footer);
+        registerForContextMenu(AlertsState);
 
-	
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		
-		//getMenuInflater().inflate(R.menu.context_device_config, menu);
-		getMenuInflater().inflate(R.menu.option_device_new, menu);
-		return true;
 	}
+	
+    private void checkServices() {
+        TextView TVGeo=(TextView)findViewById(R.id.tv_geo_footer);
+        	    
+	    //Comprobamos si el servicio esta ya iniciado
+	    Intent myIntent = new Intent(this, GeopositioningService.class);
+        pendingIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+        if (pendingIntent == null) {
+        	TVGeo.setTextColor(this.getResources().getColor(R.color.Red));
+        	TVGeo.setText(R.string.geo_off);
+        	GeoEnabled = false;
+        } else {
+        	TVGeo.setTextColor(this.getResources().getColor(R.color.Black));
+        	TVGeo.setText(R.string.geo_on);
+        	GeoEnabled= true;
+        }	
+		
+	}
+
+	public void onTvGeoFooterClick(View v) {
+		
+		TextView TVGeo=(TextView)findViewById(R.id.tv_geo_footer);
+        if (!GeoEnabled) {
+        	if (isGPSorNetworkEnabled())
+        	{
+        		enableGeopositioning();
+        		TVGeo.setTextColor(this.getResources().getColor(R.color.Black));
+        		TVGeo.setText(R.string.geo_on);
+        		GeoEnabled=true;
+        	}
+        	else
+        	{
+        		showAlertGPSDisabled();
+        	}
+        } else {
+        	disableGeopositioning();
+        	TVGeo.setTextColor(this.getResources().getColor(R.color.Red));
+        	TVGeo.setText(R.string.geo_off);
+        	GeoEnabled=false;
+
+        }
+    }
+	
+	public void onTvAlertsFooterClick(View v)
+	{
+		
+		
+	}
+    
+  //region GEO utils
+    
+	private void enableGeopositioning() {
+	    mGeoInterval = dm.getServcieMinutes("Geo");
+		long milisegundos = mGeoInterval * 60 * 1000;
+						
+		Intent intent = new Intent(this, GeopositioningService.class);
+        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+		
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE); 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 10);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), milisegundos, pendingIntent);
+ 
+        Toast.makeText(this, getString(R.string.started_geo_service), Toast.LENGTH_LONG).show();
+	}
+	
+	private void disableGeopositioning() {
+		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		alarmManager.cancel(pendingIntent);
+        pendingIntent = null;        
+		
+        Toast.makeText(this, getString(R.string.stopped_geo_service), Toast.LENGTH_LONG).show();
+	}
+	
+	private Boolean isGPSorNetworkEnabled() {
+		Boolean enabled = false;
+		
+		//Accedemos a los servicios de localización del sistema
+		LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+		
+		//Obtenemos el estado del GPS y de la red
+		Boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        Boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+         if (isGPSEnabled || isNetworkEnabled) 
+        	 enabled = true;
+         
+         return enabled;
+	}
+	
+	private void showAlertGPSDisabled() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(getString(R.string.error));
+		builder.setMessage(getString(R.string.gps_not_enabled));
+		builder.setCancelable(false);       
+		builder.setIcon(R.drawable.ic_alerts_and_warnings);    
+		builder.setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});   
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
+	//endregion GEO
+
 	
 	
 	public void openWebView(String pDeviceName) {
@@ -159,6 +281,24 @@ public class MainActivity extends Activity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.context_device_config, menu);
 	    }
+	  if (v.getId()==R.id.tv_geo_footer) {		  
+			DialogFragment  newdialog = new ServiceConfigFragment();
+		    Bundle args = new Bundle();
+		    args.putInt("service", R.id.tv_geo_footer);
+		    args.putInt("minutes", dm.getServcieMinutes("Geo"));
+			newdialog.setArguments(args);
+			newdialog.show(getSupportFragmentManager(),null);
+		  
+		}
+	  if (v.getId()==R.id.tv_alerts_footer) {
+			DialogFragment  newdialog = new ServiceConfigFragment();
+		    Bundle args = new Bundle();
+		    args.putInt("service", R.id.tv_alerts_footer);
+		    args.putInt("minutes", dm.getServcieMinutes("Alerts"));
+			newdialog.setArguments(args);
+			newdialog.show(getSupportFragmentManager(), null);
+
+	     }
 	}
 	
 	@Override
@@ -177,23 +317,14 @@ public class MainActivity extends Activity {
 	        case R.id.deleteOption: //delete
 	            deleteDevice(Integer.parseInt(DeviceId));
 	            return true;
+	        case R.id.newOption:
+	            CallNewDeviceActivity();
+	            return true;
 	        default:
 	            return super.onContextItemSelected(item);
 	    }
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.newOption:
-	            CallNewDeviceActivity();
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-
 	private void CallNewDeviceActivity() {
 		Intent intent = new Intent(this, EditDeviceActivity.class);
 		startActivity(intent);
@@ -222,9 +353,6 @@ public class MainActivity extends Activity {
 		    	
 	            adapter.notifyDataSetChanged();
 	    		Toast.makeText(MainActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
-	            /*Intent intent = getIntent();
-	            finish();
-	            startActivity(intent);*/
 	    		
 		    }})
 		 .setNegativeButton(android.R.string.no, null).show();		
@@ -239,5 +367,40 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 		
 	}
+	
+    public void onUserSelectValue(boolean result) {
 
+		if (result)
+		{
+			Intent intent = getIntent();
+			finish();
+			startActivity(intent);
+		}
+		else
+		{
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
+		}
+    }
+
+	public void restartServcie(int serviceButtonId, int minutes) {
+		
+    	dm = new DatabaseHelper(getApplicationContext());
+    	   	
+	    switch (serviceButtonId) {
+	    case R.id.tv_alerts_footer:
+	    	dm.updateServiceConfig("Alerts",minutes);
+	    	AlertsState.invalidate();
+	    break;
+	    case R.id.tv_geo_footer:
+	    	dm.updateServiceConfig("Geo",minutes);
+	    	disableGeopositioning();
+	    	GeoState.invalidate();
+	    	checkServices();
+	    	enableGeopositioning();
+	    break;
+	    
+	    }
+	 }
+		
 }
