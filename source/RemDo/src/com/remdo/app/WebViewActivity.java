@@ -62,7 +62,7 @@ public class WebViewActivity extends Activity {
 	    String uriToDisplay = intent.getStringExtra("DEVICE_URL");
 	    String usr = intent.getStringExtra("DEVICE_USER");
 	    String pwd = intent.getStringExtra("DEVICE_PASSWORD");
-	    Long odTypeId = intent.getLongExtra("DEVICE_ODTYPEID",-1);
+	    Integer odTypeId = intent.getIntExtra("DEVICE_ODTYPEID",-1);
 		
 	    if (odTypeId == 1)//ODNetWork	 
 	    {

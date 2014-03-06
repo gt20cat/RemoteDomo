@@ -61,7 +61,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-
+/**
+ * MainActivity class implements RemoteDomo interface features, diplays alerts preview, all configured OD devices and services state.
+ */
 public class MainActivity extends FragmentActivity {
 
 	public final static String DEVICE_URL = "";
@@ -72,6 +74,9 @@ public class MainActivity extends FragmentActivity {
 	
 	private static boolean GeoEnabled = false;
 	private static int mGeoInterval;
+	private static boolean AlertsEnabled = false;
+	private static int mAlertsInterval;
+	
 	//Mediante este PendingIntent controlaremos el servicio de geoposicionamiento
 	private static PendingIntent pendingIntent;
 	
@@ -138,11 +143,14 @@ public class MainActivity extends FragmentActivity {
         registerForContextMenu(AlertsState);
 
 	}
-	
+	/**
+	 * This method checks services state, and configure MainActivity layout to be displayed accordingly.
+	 */
     private void checkServices() {
         TextView TVGeo=(TextView)findViewById(R.id.tv_geo_footer);
+        TextView TVAlerts=(TextView)findViewById(R.id.tv_alerts_footer);
         	    
-	    //Comprobamos si el servicio esta ya iniciado
+	    //Comprobamos si el servicio GEO esta iniciado
 	    Intent myIntent = new Intent(this, GeopositioningService.class);
         pendingIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
         if (pendingIntent == null) {
@@ -154,6 +162,19 @@ public class MainActivity extends FragmentActivity {
         	TVGeo.setText(R.string.geo_on);
         	GeoEnabled= true;
         }	
+        
+	    //Comprobamos si el servicio Alerts esta  iniciado
+	    myIntent = new Intent(this, GeopositioningService.class);
+        pendingIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+        if (pendingIntent == null) {
+        	TVGeo.setTextColor(this.getResources().getColor(R.color.Red));
+        	TVGeo.setText(R.string.alerts_off);
+        	AlertsEnabled = false;
+        } else {
+        	TVGeo.setTextColor(this.getResources().getColor(R.color.Black));
+        	TVGeo.setText(R.string.alerts_on);
+        	AlertsEnabled= true;
+        }
 		
 	}
 
@@ -188,7 +209,10 @@ public class MainActivity extends FragmentActivity {
 	}
     
   //region GEO utils
-    
+	
+    /**
+     * Anables geopositioning service with configured minutes span in Services database
+     */
 	private void enableGeopositioning() {
 	    mGeoInterval = dm.getServcieMinutes("Geo");
 		long milisegundos = mGeoInterval * 60 * 1000;
@@ -247,7 +271,10 @@ public class MainActivity extends FragmentActivity {
 	//endregion GEO
 
 	
-	
+	/**
+	 * This method call to WebView activity in order to display pDeviceName
+	 * @param pDeviceName device name displayed in device list
+	 */
 	public void openWebView(String pDeviceName) {
 		Intent intent = new Intent(this, WebViewActivity.class);
 		
@@ -330,7 +357,10 @@ public class MainActivity extends FragmentActivity {
 		startActivity(intent);
 	}
 
-
+	/**
+	 * Removes from database specified device
+	 * @param idDevice identifier of the device to be removed.
+	 */
 	private void deleteDevice(final long idDevice) {
 
 		new AlertDialog.Builder(this)
@@ -358,7 +388,10 @@ public class MainActivity extends FragmentActivity {
 		 .setNegativeButton(android.R.string.no, null).show();		
 	}
 	
-
+	/**
+	 * Calls to EditDeviceActivity in order to edit specified device configuration
+	 * @param id Identifier of the device to be edited.
+	 */
 	private void editDevice(long id) {
 
 		Intent intent = new Intent(this, EditDeviceActivity.class);
