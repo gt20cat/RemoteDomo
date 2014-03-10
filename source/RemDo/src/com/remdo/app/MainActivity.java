@@ -22,6 +22,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import remdo.services.GeopositioningService;
+import remdo.services.NotificationService;
+
 import com.remdo.app.R;
 import com.remdo.app.R.id;
 import com.remdo.app.R.layout;
@@ -77,8 +79,8 @@ public class MainActivity extends FragmentActivity {
 	private static boolean AlertsEnabled = false;
 	private static int mAlertsInterval;
 	
-	//Mediante este PendingIntent controlaremos el servicio de geoposicionamiento
-	private static PendingIntent pendingIntent;
+	private static PendingIntent pendingGeoIntent;
+	private static PendingIntent pendingAlertsIntent;
 	
 	private static boolean AlertsEnables = true;
 	ListView deviceList;
@@ -152,8 +154,8 @@ public class MainActivity extends FragmentActivity {
         	    
 	    //Comprobamos si el servicio GEO esta iniciado
 	    Intent myIntent = new Intent(this, GeopositioningService.class);
-        pendingIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
-        if (pendingIntent == null) {
+        pendingGeoIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+        if (pendingGeoIntent == null) {
         	TVGeo.setTextColor(this.getResources().getColor(R.color.Red));
         	TVGeo.setText(R.string.geo_off);
         	GeoEnabled = false;
@@ -164,15 +166,15 @@ public class MainActivity extends FragmentActivity {
         }	
         
 	    //Comprobamos si el servicio Alerts esta  iniciado
-	    myIntent = new Intent(this, GeopositioningService.class);
-        pendingIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
-        if (pendingIntent == null) {
-        	TVGeo.setTextColor(this.getResources().getColor(R.color.Red));
-        	TVGeo.setText(R.string.alerts_off);
+	    myIntent = new Intent(this, NotificationService.class);
+	    pendingAlertsIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+        if (pendingAlertsIntent == null) {
+        	TVAlerts.setTextColor(this.getResources().getColor(R.color.Red));
+        	TVAlerts.setText(R.string.alerts_off);
         	AlertsEnabled = false;
         } else {
-        	TVGeo.setTextColor(this.getResources().getColor(R.color.Black));
-        	TVGeo.setText(R.string.alerts_on);
+        	TVAlerts.setTextColor(this.getResources().getColor(R.color.Black));
+        	TVAlerts.setText(R.string.alerts_on);
         	AlertsEnabled= true;
         }
 		
@@ -204,7 +206,20 @@ public class MainActivity extends FragmentActivity {
 	
 	public void onTvAlertsFooterClick(View v)
 	{
-		
+		TextView TVAlerts=(TextView)findViewById(R.id.tv_alerts_footer);
+        if (!AlertsEnabled) {
+        	enableNotificationsService();
+        	TVAlerts.setTextColor(this.getResources().getColor(R.color.Black));
+        	TVAlerts.setText(R.string.alerts_on);
+        	AlertsEnabled=true;
+        }
+        else
+        {
+        	disableNotificationsService();
+			TVAlerts.setTextColor(this.getResources().getColor(R.color.Red));
+			TVAlerts.setText(R.string.alerts_off);
+			AlertsEnabled=true;
+        }
 		
 	}
     
@@ -218,21 +233,21 @@ public class MainActivity extends FragmentActivity {
 		long milisegundos = mGeoInterval * 60 * 1000;
 						
 		Intent intent = new Intent(this, GeopositioningService.class);
-        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        pendingGeoIntent = PendingIntent.getService(this, 0, intent, 0);
 		
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE); 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 10);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), milisegundos, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), milisegundos, pendingGeoIntent);
  
         Toast.makeText(this, getString(R.string.started_geo_service), Toast.LENGTH_LONG).show();
 	}
 	
 	private void disableGeopositioning() {
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-		alarmManager.cancel(pendingIntent);
-        pendingIntent = null;        
+		alarmManager.cancel(pendingGeoIntent);
+        pendingGeoIntent = null;        
 		
         Toast.makeText(this, getString(R.string.stopped_geo_service), Toast.LENGTH_LONG).show();
 	}
@@ -270,6 +285,36 @@ public class MainActivity extends FragmentActivity {
 	
 	//endregion GEO
 
+	//Region Alerts
+	/**
+	 * Enables Alerts service with configured minutes span in Services database
+	 */
+	private void enableNotificationsService() {
+		mAlertsInterval = dm.getServcieMinutes("Alerts");
+		long milisegundos = mAlertsInterval * 60 * 1000;
+			
+		Intent intent = new Intent(this, NotificationService.class);
+        pendingAlertsIntent = PendingIntent.getService(this, 0, intent, 0);
+		
+		
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE); 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 10);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), milisegundos, pendingAlertsIntent);
+ 
+        Toast.makeText(this, getString(R.string.started_alerts_service), Toast.LENGTH_LONG).show();
+	}
+	
+	private void disableNotificationsService() {
+		 AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingAlertsIntent);
+        pendingAlertsIntent = null;        
+		
+        Toast.makeText(this, getString(R.string.stopped_alerts_service), Toast.LENGTH_LONG).show();
+	}
+	
+	//End region Alerts
 	
 	/**
 	 * This method call to WebView activity in order to display pDeviceName
@@ -423,7 +468,10 @@ public class MainActivity extends FragmentActivity {
 	    switch (serviceButtonId) {
 	    case R.id.tv_alerts_footer:
 	    	dm.updateServiceConfig("Alerts",minutes);
+	    	disableNotificationsService();
 	    	AlertsState.invalidate();
+	    	checkServices();
+	    	enableNotificationsService();
 	    break;
 	    case R.id.tv_geo_footer:
 	    	dm.updateServiceConfig("Geo",minutes);

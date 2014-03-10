@@ -171,8 +171,10 @@ public final class R {
         public static final int ic_alerts_and_warnings=0x7f020004;
         public static final int ic_company_logo=0x7f020005;
         public static final int ic_launcher=0x7f020006;
-        public static final int snniped_arrow=0x7f020007;
-        public static final int snniped_rounded_corners=0x7f020008;
+        public static final int ic_notificaciones_azul=0x7f020007;
+        public static final int ic_notificaciones_blanco=0x7f020008;
+        public static final int snniped_arrow=0x7f020009;
+        public static final int snniped_rounded_corners=0x7f02000a;
     }
     public static final class id {
         public static final int action_settings=0x7f090014;
