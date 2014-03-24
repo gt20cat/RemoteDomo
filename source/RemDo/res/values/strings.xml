@@ -45,6 +45,12 @@
     <string name="restart_service">Restart service</string>
     <string name="configuration">Configuration</string>
     <string name="service_config_message">Service should be restarted to apply new time configuration.</string>
+    <string name="alerts_list_title">alerts</string>
+    <string name="alerts_cotegories_title">Alerts sources</string>
+    <string name="title_activity_alerts_category">AlertsCategoryActivity</string>
+    <string name="title_activity_alerts_list">AlertsListActivity</string>
+    <string name="delete_all">Delete All</string>
+    <string name="mark_all_as_read">Mark all as read</string>
     
 
 </resources>

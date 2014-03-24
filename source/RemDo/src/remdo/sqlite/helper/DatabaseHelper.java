@@ -29,7 +29,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.opendomo.notifier.Event;
+
 import remdo.sqlite.model.Device;
+import remdo.sqlite.model.EventCategory;
 import remdo.sqlite.model.OdDeviceTypes;
 import remdo.sqlite.model.Service;
 
@@ -82,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			
 			long device_id = db.insert(T_DEVICES, null, values);
-
+			
 			return device_id;
 		}
 	    
@@ -112,7 +115,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				cursor.close();
 			} 
 			cursor.close();
-
+			
 			return list;
 		}
 		
@@ -134,8 +137,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			        null, null,null);
 			
 			int count = cursor.getCount();
+			
 			if (count>0){return true;}
 			else{return false;}
+			
 		}
 		
 		public String getDeviceParamByName(String pDeviceName,String param)
@@ -155,6 +160,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		        cursor.moveToFirst();
 		        uri = cursor.getString(cursor.getColumnIndex(param));
 		    }
+			
 			return uri;
 			
 		}
@@ -176,6 +182,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		        cursor.moveToFirst();
 		        uri = cursor.getString(cursor.getColumnIndex("url"));
 		    }
+			
 			return uri;
 			
 		}
@@ -197,6 +204,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		        cursor.moveToFirst();
 		        uri = cursor.getString(cursor.getColumnIndex("pwd"));
 		    }
+			
 			return uri;
 			
 		}
@@ -218,6 +226,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		        cursor.moveToFirst();
 		        usr = cursor.getString(cursor.getColumnIndex("usr"));
 		    }
+			
 			return usr;
 			
 		}
@@ -226,7 +235,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		public void deleteDevice(int deviceId) {
 			SQLiteDatabase db = this.getWritableDatabase();
 			db.delete(T_DEVICES, "id = ?",
-					new String[] { String.valueOf(deviceId) }); 
+					new String[] { String.valueOf(deviceId) });
+			
 		}
 	    
 	
@@ -235,15 +245,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		 * @return false if empty, true if at least there is one device in devices table
 		 */
 		public boolean hasDevices() {
-			
+
 			SQLiteDatabase db = this.getReadableDatabase();
-			
+
 			if(tableExists(T_DEVICES))
 			{
 				Cursor c = db.query(T_DEVICES, null, null, null, null, null, null);
 				int result = c.getCount();
-				c.close();
-				
+
 				if (result > 0) return true;
 				else			return false;
 			}
@@ -261,24 +270,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					+ "odTypeId = 1";
 
 			Cursor c = db.rawQuery(selectQuery, null);
-
 			if (c != null)
 			{
 				if (c.moveToFirst())
 				{
+					c.close();
+					
 					return true;					
 				}
 				else
+				{
+					c.close();
+					
 					return false;
+				}
 			}
 			else
+			{
+				c.close();
+				
 				return false;
+			}
 		}
 		
 		boolean tableExists(String tableName)
 		{
 			SQLiteDatabase db = this.getReadableDatabase();
-			
+
 		    if (tableName == null | db == null || !db.isOpen())
 		    {
 		        return false;
@@ -290,7 +308,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		    }
 		    int count = cursor.getInt(0);
 		    cursor.close();
+			
 		    return count > 0;
+
 		}
 		
 
@@ -299,7 +319,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL("CREATE TABLE " + T_DEVICES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, url TEXT not null unique, usr TEXT, pwd TEXT,locationId int, odTypeId int)");
 			db.execSQL("CREATE TABLE " + T_ODDEVICETYPES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");	
 			db.execSQL("CREATE TABLE " + T_LOCATIONS + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");
-			db.execSQL("CREATE TABLE " + T_EVENTS + " (id INTEGER PRIMARY KEY, time TEXT not null, transmitter TEXT not null, type TEXT not null, message TEXT not null)");
+			db.execSQL("CREATE TABLE " + T_EVENTS + " (id INTEGER PRIMARY KEY, time TEXT not null, transmitter TEXT not null, type TEXT not null, message TEXT not null,read int)");
 			db.execSQL("CREATE TABLE " + T_SERVICES + " (id INTEGER PRIMARY KEY, description TEXT not null, minutes int not null, locationId int not null)");
 
 			db.execSQL("INSERT INTO " + T_ODDEVICETYPES + " (id, name, description) VALUES(1,'ODNetwork','')");
@@ -315,6 +335,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL("DROP TABLE IF EXISTS " + T_DEVICES);
 			db.execSQL("DROP TABLE IF EXISTS " + T_LOCATIONS);
 			db.execSQL("DROP TABLE IF EXISTS " + T_ODDEVICETYPES);
+			db.execSQL("DROP TABLE IF EXISTS " + T_EVENTS);
+			db.execSQL("DROP TABLE IF EXISTS " + T_SERVICES);
 			onCreate(db);
 			
 		}
@@ -339,8 +361,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			dev.pwd = c.getString(c.getColumnIndex("pwd"));
 			dev.location = c.getInt(c.getColumnIndex("locationId"));
 			dev.odType = c.getInt(c.getColumnIndex("odTypeId"));
-
+			c.close();
+			
 			return dev;	
+
 		}
 		
 		public Device getDevicebyDevType(int odDevType, int locationId) {
@@ -363,15 +387,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			dev.pwd = c.getString(c.getColumnIndex("pwd"));
 			dev.location = c.getInt(c.getColumnIndex("locationId"));
 			dev.odType = c.getInt(c.getColumnIndex("odTypeId"));
-
+			c.close();
+			
 			return dev;	
+
 			
 		}
 
 		public int updateDevice(Device device) {
 
 			SQLiteDatabase db = this.getWritableDatabase();
-							
+
 			ContentValues values = new ContentValues();
 			values.put("name", device.name);
 			values.put("url", device.url);
@@ -381,9 +407,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put("odTypeId", device.odType);
 
 			
-			return db.update(T_DEVICES, values, "id = ?",	
+			int result = db.update(T_DEVICES, values, "id = ?",	
 					new String[] { String.valueOf(device.id) });
+
 			
+			return result;
 		}
 
 		public OdDeviceTypes getODDeviceType(long id ) {
@@ -402,7 +430,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			devType.id = c.getInt(c.getColumnIndex("id"));
 			devType.name = c.getString(c.getColumnIndex("name"));
 			devType.description = c.getString(c.getColumnIndex("description"));
-
+			c.close();
+			
 			return devType;
 		}
 		
@@ -422,19 +451,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			devType.id = c.getInt(c.getColumnIndex("id"));
 			devType.name = c.getString(c.getColumnIndex("name"));
 			devType.description = c.getString(c.getColumnIndex("description"));
-
+			c.close();
+			
 			return devType;
 		}
 
 		public int updateServiceConfig(String servcieDesc, int minutes) {
 			
 			SQLiteDatabase db = this.getWritableDatabase();
-							
+
 			ContentValues values = new ContentValues();
 			values.put("minutes", minutes);
 
-			return db.update(T_SERVICES, values, "description = ?",	
+			int result =  db.update(T_SERVICES, values, "description = ?",	
 					new String[] { String.valueOf(servcieDesc) });
+			
+			return result;
 			
 		}
 		
@@ -450,9 +482,83 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			if (c != null)
 				c.moveToFirst();
 
-			return c.getInt(c.getColumnIndex("minutes"));
+			int result = c.getInt(c.getColumnIndex("minutes"));
+			c.close();
+			
+			return result;
 
 		}
+		
+		public long insertEvent(Event event) {
+			
+			SQLiteDatabase db = this.getWritableDatabase();
+			
+			ContentValues values = new ContentValues();
+			values.put("time", event.getTime());
+			values.put("transmitter", event.getTransmitter());
+			values.put("type", event.getType());
+			values.put("message", event.getMessage());
+			values.put("read", 0);
+
+			
+			long event_id = db.insert(T_EVENTS, null, values);
+			
+			return event_id;
+		}
+
+		public boolean existsEvent(Event event) {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+
+			String selectQuery = "SELECT id  FROM " + T_EVENTS + " WHERE "
+					+ "time = '" + event.getTime() + "' and transmitter = '" + event.getTransmitter() +
+					"' and type = '" + event.getType() + "' and message = '" + event.getMessage() + "'";
+			
+		    Cursor cursor = db.rawQuery(selectQuery,null);
+		    if (!cursor.moveToFirst())
+		    {
+		    	cursor.close();
+		        return false;
+		    }
+		    int count = cursor.getInt(0);
+		    cursor.close();
+			
+		    return count > 0;
+		}
+
+		public List<EventCategory> selectCategoriesAll() {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+			List<EventCategory> list = new ArrayList<EventCategory>();
+
+			Cursor cursor = db.query(T_EVENTS, new String[] { "count(id)","transmitter" },
+					"read = 0", null, "transmitter", null, "transmitter ASC"); 
+
+			/*Cursor cursor2 = db.query(T_EVENTS, new String[] { "sum(id)","name" },
+					"read = 1", null, "name", null, "name ASC"); */
+		
+			int x=0;
+			if (cursor.moveToFirst()) {
+				//cursor2.moveToFirst();
+				do {
+					EventCategory b1 = new EventCategory(cursor.getString(1),0,cursor.getInt(0));
+
+					list.add(b1);
+
+					x=x+1;
+				} while (cursor.moveToNext());
+			}
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+				//cursor2.close();
+			} 
+			cursor.close();
+			
+			return list;
+			
+		}
+		
+		
 
 
 		

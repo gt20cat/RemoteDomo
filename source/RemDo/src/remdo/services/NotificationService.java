@@ -153,14 +153,14 @@ public class NotificationService extends Service {
   		@Override
   		protected String doInBackground(String... params) {
   			
-  			String host = params[0].toString();
+   			String host = params[0].toString();
   			
 			Boolean success = false;
   			String respuesta = null;
   			HttpURLConnection urlConnection = null;
   			try {
   				
-  				int reintentos = 1;
+  				int reintentos = 2;
   				do{
   	  				URL url = new URL(host + "/cgi-bin/od.cgi/tools/showEvents.sh?&GUI=XML");
   	  				urlConnection = (HttpURLConnection) url.openConnection();
@@ -195,7 +195,7 @@ public class NotificationService extends Service {
   							//Ejecutamos una tarea en background que realizará el intento de inicio de sesion
   							LoginTask = new Login();
   							LoginTask.execute(connParams);
-  							reintentos = reintentos - 1;
+  							reintentos = reintentos -  1;
   							try {
   								Thread.sleep(500);
   							} catch (InterruptedException e) {
@@ -204,7 +204,7 @@ public class NotificationService extends Service {
   							}
   						}
 					}
-  				}while(reintentos == 0 || success == false);
+  				}while(reintentos > 0 && success == false);
 				
 				if (success) {
 					InputStream is = new BufferedInputStream(urlConnection.getInputStream());					
@@ -238,7 +238,7 @@ public class NotificationService extends Service {
 				try {
 					InputStream stream = new ByteArrayInputStream(notificacionesXML.getBytes("UTF-8"));
 					EventsList events = EventsXmlParser.parse(stream);
-					displayNotifications(events);
+					saveNotifications(events);
 				} 
 				catch (XmlPullParserException e) {} 
 				catch (IOException e) {}     			
@@ -251,13 +251,19 @@ public class NotificationService extends Service {
 		}
   	}
   	
-  	public void displayNotifications (EventsList events) {
+  	public void saveNotifications (EventsList events) {
+  		dm = new DatabaseHelper(getApplicationContext());
    		Iterator<Event> iter = events.getIterator();
-  		while (iter.hasNext()) {
+  		int notif= 1;
+   		while (iter.hasNext()) {
   			Event event = iter.next();
-  			displayNotification(event, notificationId);
-  			notificationId++;
+  			if (!dm.existsEvent(event))
+  			{
+  				dm.insertEvent(event);
+  			}
+  			notif++;
   		}
+			displayNotification(notif);
   	}
   	
   	
@@ -288,5 +294,31 @@ public class NotificationService extends Service {
         nManager.notify(identifier, noti);         
   	}
 
+  	
+  	/**
+	 * Muestra una notificación en la barra de notificaciones
+	 * 
+	 * @param quantity - Número de notificaciones nuevas
+	 */
+  	public void displayNotification (int quantity) {
+  		NotificationManager nManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE); 
+  		
+  		Intent i = new Intent(this, AlertsCategoryActivity.class);
+
+  		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, 0);
+                  
+        CharSequence ticker = quantity +" New OpenDomo events";
+        CharSequence contentTitle = "RemoteDomo";
+        CharSequence contentText = quantity +" New OpenDomo events.";
+        Notification noti = new NotificationCompat.Builder(getApplicationContext())
+                                 .setContentIntent(pendingIntent)
+                                 .setTicker(ticker)
+                                 .setContentTitle(contentTitle)
+                                 .setContentText(contentText)
+                                 .setSmallIcon(R.drawable.ic_notificaciones_blanco)
+                                 .addAction(R.drawable.ic_notificaciones_blanco, ticker, pendingIntent)
+                                 .build();
+        nManager.notify(1, noti);         
+  	}
 
 }

@@ -57,7 +57,7 @@ public class Login extends AsyncTask<ArrayList<String>, Integer, String> {
 							
 			
 			//"http://192.168.1.47/cgi-bin/od.cgi?GUI=XML"
-			URL url = new URL("http://172.25.1.100/cgi-bin/od.cgi?GUI=XML");
+			URL url = new URL(host + "/cgi-bin/od.cgi?GUI=XML");
 			urlConnection = (HttpURLConnection) url.openConnection();
 			//urlConnection.setReadTimeout(20000);
 			urlConnection.setRequestMethod("POST");

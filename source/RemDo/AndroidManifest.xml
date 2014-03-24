@@ -41,6 +41,15 @@
             android:label="@string/title_activity_web_view" >
         </activity>
         
+        <activity
+            android:name="com.remdo.app.AlertsCategoryActivity"
+            android:label="@string/title_activity_alerts_category" >
+        </activity>
+		 <activity
+            android:name="com.remdo.app.AlertsListActivity"
+            android:label="@string/title_activity_alerts_list" >
+        </activity>
+        
         <service
             android:name="remdo.services.NotificationService"
             android:enabled="true"

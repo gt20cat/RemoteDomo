@@ -222,6 +222,13 @@ public class MainActivity extends FragmentActivity {
         }
 		
 	}
+	
+	public void ontvAlertsClick(View v)
+	{
+		Intent intent = new Intent(this, AlertsCategoryActivity.class);
+		startActivity(intent);
+	}
+	
     
   //region GEO utils
 	

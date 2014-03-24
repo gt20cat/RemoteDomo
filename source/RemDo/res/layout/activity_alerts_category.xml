@@ -6,27 +6,18 @@
 
     tools:context=".MainActivity" >
 
-    <RelativeLayout 
-		   android:layout_width="fill_parent"
-		   android:layout_height="wrap_content"
-		   android:background="@color/Silver">
-
-           <TextView
-	        android:id="@+id/selection2"
-	        android:layout_width="fill_parent"
-	        android:layout_height="40dip"
-	        android:text="@string/alerts_title" 
-	        android:padding="4dip"
-	        android:textSize="25sp"
-		    android:gravity="center"
-		    android:onClick="ontvAlertsClick" 
-		    android:clickable="true"
-		    android:background="@android:drawable/list_selector_background"/>
-
-	</RelativeLayout>
+    <TextView
+        android:id="@+id/selectionCategory"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:text="@string/alerts_cotegories_title" 
+        android:padding="4dip"
+        android:textSize="25sp"
+	    android:background="@color/Silver"
+	    android:gravity="center"/>
 
      <ListView
-	    android:id="@+id/deviceList"
+	    android:id="@+id/categoryList"
 	    android:layout_width="fill_parent"
 	    android:layout_height="0px"
 	    android:layout_weight="1"
@@ -44,27 +35,27 @@
        android:layout_centerInParent="true"
        android:background="#FFFFFF"/>
    <TextView
-       android:id="@+id/tv_geo_footer"
+       android:id="@+id/tv_delete_all"
        android:layout_width="wrap_content"
        android:layout_height="30dp"
        android:layout_alignRight="@id/fakeView"
        android:layout_alignParentLeft="true"
        android:gravity="center"
-       android:onClick="onTvGeoFooterClick" 
+       android:onClick="onTvDeleteAllClick" 
        android:clickable="true"
-       android:text="@string/geo_off"
+       android:text="@string/delete_all"
        android:background="@android:drawable/list_selector_background"/>
 
    <TextView 
-       android:id="@+id/tv_alerts_footer"
+       android:id="@+id/tv_read_all"
       android:layout_width="wrap_content"
       android:layout_height="30dp"
       android:layout_alignLeft="@id/fakeView"
       android:layout_alignParentRight="true"
       android:gravity="center"
-      android:onClick="onTvAlertsFooterClick" 
+      android:onClick="onTvReadAllClick" 
       android:clickable="true"
-      android:text="@string/alerts_off"
+      android:text="@string/mark_all_as_read"
       android:background="@android:drawable/list_selector_background"/>
 
 </RelativeLayout>

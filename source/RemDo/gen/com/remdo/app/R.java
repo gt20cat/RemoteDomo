@@ -177,35 +177,42 @@ public final class R {
         public static final int snniped_rounded_corners=0x7f02000a;
     }
     public static final class id {
-        public static final int action_settings=0x7f090014;
-        public static final int button_accept=0x7f090008;
-        public static final int deleteOption=0x7f090012;
-        public static final int deviceList=0x7f09000a;
-        public static final int editOption=0x7f090011;
-        public static final int edit_devicename=0x7f090003;
-        public static final int edit_host=0x7f090004;
-        public static final int edit_password=0x7f090006;
-        public static final int edit_user=0x7f090005;
-        public static final int etMinutes=0x7f090010;
-        public static final int fakeView=0x7f09000b;
-        public static final int image_logo_company=0x7f090002;
-        public static final int login_form=0x7f090001;
-        public static final int login_status=0x7f090000;
-        public static final int newOption=0x7f090013;
-        public static final int selection2=0x7f090009;
-        public static final int spinner=0x7f090007;
-        public static final int textView1=0x7f09000e;
-        public static final int tv_alerts_footer=0x7f09000d;
-        public static final int tv_geo_footer=0x7f09000c;
-        public static final int webView1=0x7f09000f;
+        public static final int action_settings=0x7f090018;
+        public static final int button_accept=0x7f090011;
+        public static final int categoryList=0x7f090001;
+        public static final int deleteOption=0x7f090016;
+        public static final int deviceList=0x7f090006;
+        public static final int editOption=0x7f090015;
+        public static final int edit_devicename=0x7f09000c;
+        public static final int edit_host=0x7f09000d;
+        public static final int edit_password=0x7f09000f;
+        public static final int edit_user=0x7f09000e;
+        public static final int etMinutes=0x7f090014;
+        public static final int fakeView=0x7f090002;
+        public static final int image_logo_company=0x7f09000b;
+        public static final int login_form=0x7f09000a;
+        public static final int login_status=0x7f090009;
+        public static final int newOption=0x7f090017;
+        public static final int selection2=0x7f090005;
+        public static final int selectionCategory=0x7f090000;
+        public static final int spinner=0x7f090010;
+        public static final int textView1=0x7f090012;
+        public static final int tv_alerts_footer=0x7f090008;
+        public static final int tv_delete_all=0x7f090003;
+        public static final int tv_geo_footer=0x7f090007;
+        public static final int tv_read_all=0x7f090004;
+        public static final int webView1=0x7f090013;
     }
     public static final class layout {
-        public static final int activity_edit_device=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int activity_splash=0x7f030002;
-        public static final int activity_web_view=0x7f030003;
-        public static final int device_list_item=0x7f030004;
-        public static final int service_config_dialog=0x7f030005;
+        public static final int activity_alerts_category=0x7f030000;
+        public static final int activity_alerts_list=0x7f030001;
+        public static final int activity_edit_device=0x7f030002;
+        public static final int activity_main=0x7f030003;
+        public static final int activity_splash=0x7f030004;
+        public static final int activity_web_view=0x7f030005;
+        public static final int alert_category_list_item=0x7f030006;
+        public static final int device_list_item=0x7f030007;
+        public static final int service_config_dialog=0x7f030008;
     }
     public static final class menu {
         public static final int context_device_config=0x7f080000;
@@ -219,6 +226,8 @@ public final class R {
         public static final int WelcomeText=0x7f060004;
         public static final int action_settings=0x7f060001;
         public static final int add_new_device=0x7f060010;
+        public static final int alerts_cotegories_title=0x7f06002d;
+        public static final int alerts_list_title=0x7f06002c;
         public static final int alerts_off=0x7f060021;
         public static final int alerts_on=0x7f060024;
         public static final int alerts_title=0x7f060013;
@@ -228,6 +237,7 @@ public final class R {
         public static final int company_logo=0x7f060003;
         public static final int configuration=0x7f06002a;
         public static final int delete=0x7f060017;
+        public static final int delete_all=0x7f060030;
         public static final int delete_warning=0x7f06001e;
         public static final int deviceName=0x7f060005;
         public static final int edit=0x7f060019;
@@ -243,6 +253,7 @@ public final class R {
         public static final int gps_not_enabled=0x7f060023;
         public static final int host=0x7f060006;
         public static final int login_progress_autenticacion=0x7f06000b;
+        public static final int mark_all_as_read=0x7f060031;
         public static final int minutes=0x7f06000a;
         public static final int new_device=0x7f06001c;
         public static final int ok=0x7f060011;
@@ -255,6 +266,8 @@ public final class R {
         public static final int started_geo_service=0x7f060025;
         public static final int stopped_alerts_service=0x7f060028;
         public static final int stopped_geo_service=0x7f060026;
+        public static final int title_activity_alerts_category=0x7f06002e;
+        public static final int title_activity_alerts_list=0x7f06002f;
         public static final int title_activity_edit_device=0x7f060002;
         public static final int title_activity_main=0x7f06000f;
         public static final int title_activity_web_view=0x7f060015;
