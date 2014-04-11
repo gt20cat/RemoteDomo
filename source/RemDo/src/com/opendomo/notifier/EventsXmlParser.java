@@ -20,11 +20,15 @@ package com.opendomo.notifier;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Xml;
 
 /**
@@ -108,7 +112,11 @@ public class EventsXmlParser {
         	String type = aux.substring(aux.indexOf('.')+1, aux.length());
         	String message = label;
         	
-        	event = new Event(time,transmitter,type,message);        	 
+        	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        	Calendar cal = Calendar.getInstance();
+
+        	
+        	event = new Event(dateFormat.format(cal.getTime()),time,transmitter,type,message);        	 
         	parser.nextTag();
         }
         parser.require(XmlPullParser.END_TAG, ns, "item");

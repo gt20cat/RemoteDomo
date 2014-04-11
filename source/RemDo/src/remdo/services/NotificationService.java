@@ -62,6 +62,7 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 
 /**
@@ -119,7 +120,7 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
     	super.onDestroy();
-    	//Toast.makeText(this, "NotificationService.onDestroy()", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.stopped_alerts_service), Toast.LENGTH_LONG).show();
     }
     
     @SuppressWarnings("unchecked")
@@ -254,16 +255,16 @@ public class NotificationService extends Service {
   	public void saveNotifications (EventsList events) {
   		dm = new DatabaseHelper(getApplicationContext());
    		Iterator<Event> iter = events.getIterator();
-  		int notif= 1;
+  		int notif= 0;
    		while (iter.hasNext()) {
   			Event event = iter.next();
   			if (!dm.existsEvent(event))
   			{
   				dm.insertEvent(event);
+  	  			notif++;
   			}
-  			notif++;
   		}
-			displayNotification(notif);
+   		if (notif > 0) displayNotification();
   	}
   	
   	
@@ -300,11 +301,13 @@ public class NotificationService extends Service {
 	 * 
 	 * @param quantity - Número de notificaciones nuevas
 	 */
-  	public void displayNotification (int quantity) {
+  	public void displayNotification () {
   		NotificationManager nManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE); 
   		
+  		int quantity = dm.getUnreadAlerts();
+  		
   		Intent i = new Intent(this, AlertsCategoryActivity.class);
-
+  		
   		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, 0);
                   
         CharSequence ticker = quantity +" New OpenDomo events";
@@ -317,6 +320,7 @@ public class NotificationService extends Service {
                                  .setContentText(contentText)
                                  .setSmallIcon(R.drawable.ic_notificaciones_blanco)
                                  .addAction(R.drawable.ic_notificaciones_blanco, ticker, pendingIntent)
+                                 .setAutoCancel(true)
                                  .build();
         nManager.notify(1, noti);         
   	}

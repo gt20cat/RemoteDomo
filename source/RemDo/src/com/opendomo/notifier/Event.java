@@ -26,11 +26,13 @@ package com.opendomo.notifier;
  */
 
 public class Event {
-	
+
+	private String day;
 	private String time;
 	private String transmitter;
 	private String type;	
 	private String message;	
+	private int read;	
 	
 	/**
 	 * Constructor de la clase Event
@@ -40,14 +42,34 @@ public class Event {
 	 * @param type - Nivel de prioridad (debug, info, notice, warm, error y crit)
 	 * @param message - Descripción del evento.
 	 */	
-	public Event(String time, String transmitter, String type, String message) {
+	public Event(String day,String time, String transmitter, String type, String message, int read) {
 		super();
+		this.day = day;
 		this.time = time;
 		this.transmitter = transmitter;
 		this.type = type;
 		this.message = message;
+		this.read = read;
+	}
+	
+	public Event(String day, String time, String transmitter, String type, String message) {
+		super();
+		this.day = day;
+		this.time = time;
+		this.transmitter = transmitter;
+		this.type = type;
+		this.message = message;
+		this.read = 0;
 	}
 
+	public String getDay() {
+		return day;
+	}
+	
+	public void setDay(String day) {
+		this.day = day;
+	}
+	
 	public String getTime() {
 		return time;
 	}
@@ -78,5 +100,13 @@ public class Event {
 	
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	public int getRead() {
+		return read;
+	}
+	
+	public void setRead(int read) {
+		this.read = read;
 	}
 }

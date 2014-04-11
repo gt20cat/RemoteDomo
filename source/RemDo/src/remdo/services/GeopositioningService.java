@@ -35,6 +35,7 @@ import remdo.sqlite.helper.DatabaseHelper;
 
 import com.opendomo.utilities.NetworkUtilities;
 import com.remdo.app.ProjectApplication;
+import com.remdo.app.R;
 
 import android.app.Service;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.widget.Toast;
 
 /**
  * Servicio de geoposicionamiento.<p>
@@ -300,7 +302,7 @@ public class GeopositioningService extends Service implements LocationListener {
     @Override
     public void onDestroy() {
     	super.onDestroy();
-    	//Toast.makeText(this, "GeopositioningService.onDestroy()", Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, getString(R.string.stopped_geo_service), Toast.LENGTH_LONG).show();
     }
   	
     //****** LocationListener ********

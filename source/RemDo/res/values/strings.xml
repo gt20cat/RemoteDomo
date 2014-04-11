@@ -20,7 +20,7 @@
     <string name="add_new_device">Add more OD devices?</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="alerts_title">Alerts</string>
+    <string name="alerts_title">view Alerts</string>
     <string name="geo_title">Geopositioning</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="error_invalid_url">URL is invalid</string>

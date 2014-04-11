@@ -3,10 +3,17 @@ package com.remdo.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.remdo.adapters.Category;
+import com.remdo.adapters.CategoryAdapter;
+
 import remdo.sqlite.helper.DatabaseHelper;
 import remdo.sqlite.model.EventCategory;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -18,7 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class AlertsCategoryActivity extends FragmentActivity {
 
 	
-	private  ArrayAdapter<String> adapter;
+	private  CategoryAdapter adapter;
 	
 	ListView categoryList;
 	TextView DeleteAll;
@@ -28,41 +35,35 @@ public class AlertsCategoryActivity extends FragmentActivity {
 	
 	List<String[]> list = new ArrayList<String[]>();
 	List<EventCategory> categories =null ;
-	String[] categoriNames;
+	EventCategory[] categoriNames;
 	String selectedItem;
 	
 	private static TextView tvDeleteAll;
 	private static TextView tvReadAll;
 	
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_alerts_category);
+		super.onCreate(savedInstanceState);
+		TextView tvTitle = (TextView)findViewById(R.id.selectionCategory);
+		tvTitle.setText(R.string.alerts_cotegories_title);
 		
 		try
 		{
 			dm = new DatabaseHelper(getApplicationContext());
 			categories = dm.selectCategoriesAll();
 	
-			categoriNames=new String[categories.size()]; 
-	
-			int x=0;
-			String stg;
-	
-			for (EventCategory cat : categories) {
-				stg = cat.unreadAlerts + " - "+ cat.name;
-	
-				categoriNames[x]=stg;
-				x++;
-			}
+			categoriNames = categories.toArray(new EventCategory[categories.size()]);
+
 		}
 		catch(Exception ex)
 		{
 			String aux = ex.getMessage();
 			
 		}
-		adapter = new ArrayAdapter<String>(   
-				this,R.layout.device_list_item,   
+		adapter = new CategoryAdapter(this,
+				R.layout.category_list_item,   
 				categoriNames);
 
 		categoryList=(ListView)findViewById(R.id.categoryList);
@@ -77,17 +78,62 @@ public class AlertsCategoryActivity extends FragmentActivity {
         });
         registerForContextMenu(categoryList);
         
+        /*http://www.ezzylearning.com/tutorial.aspx?tid=1763429*/
         
         tvDeleteAll = (TextView)findViewById(R.id.tv_delete_all);
         registerForContextMenu(tvDeleteAll);
         tvReadAll = (TextView)findViewById(R.id.tv_read_all);
         registerForContextMenu(tvReadAll);
-        
-	}
-
-	protected void openAlertsListActivity(String string) {
-		// TODO Auto-generated method stub
+		Log.v("Example", "onCreate");
+		getIntent().setAction("Already created");
 		
 	}
+	
+	protected void onResume()
+	{
+
+	    String action = getIntent().getAction();
+	    // Prevent endless loop by adding a unique action, don't restart if action is present
+	    if(action == null || !action.equals("Already created")) {
+		
+	        Log.v("Example", "Force restart");
+	        Intent intent = new Intent(this, AlertsCategoryActivity.class);
+	        startActivity(intent);
+	        finish();
+	    }
+	    // Remove the unique action so the next time onResume is called it will restart
+	    else
+	        getIntent().setAction(null);
+
+	    super.onResume();
+		
+	}
+	
+
+	protected void openAlertsListActivity(EventCategory cat) {
+		
+		Intent intent = new Intent(this, AlertsListActivity.class);
+		
+		intent.putExtra("CATEGORY_NAME", cat.name);
+				
+		startActivity(intent);
+		
+	}
+	
+	public void onTvDeleteAllClick(View v) {		
+		dm = new DatabaseHelper(getApplicationContext());
+		dm.deleteAlertsAll();
+		finish();
+		startActivity(getIntent());
+		
+	}
+	public void onTvReadAllClick(View v) {
+		
+		dm = new DatabaseHelper(getApplicationContext());
+		dm.markAsReadAlertsAll();
+		finish();
+		startActivity(getIntent());
+	}
+	
 	
 }

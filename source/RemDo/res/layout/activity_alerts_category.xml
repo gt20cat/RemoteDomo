@@ -10,7 +10,6 @@
         android:id="@+id/selectionCategory"
         android:layout_width="fill_parent"
         android:layout_height="40dip"
-        android:text="@string/alerts_cotegories_title" 
         android:padding="4dip"
         android:textSize="25sp"
 	    android:background="@color/Silver"

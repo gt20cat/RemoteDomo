@@ -1,5 +1,4 @@
 /* ************************************************************************  
- * RemoteDomo is an Android native application to remotely control domotics systems
  * Copyright © 2013 Gerard Torrents Vinaixa
  *  
  * This program is free software: you can redistribute it and/or modify
@@ -35,10 +34,13 @@ import remdo.sqlite.model.*;
 import android.R.integer;
 import android.R.string;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,6 +48,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -136,14 +139,38 @@ public class MainActivity extends FragmentActivity {
 			}
         });
         registerForContextMenu(deviceList);
-        
-        checkServices();
              
+        checkServices();
+        
         GeoState =(TextView)findViewById(R.id.tv_geo_footer);
         registerForContextMenu(GeoState);
         AlertsState =(TextView)findViewById(R.id.tv_alerts_footer);
         registerForContextMenu(AlertsState);
+        
+        Log.v("Example", "onCreate");
+		getIntent().setAction("Already created");
 
+	}
+	
+	
+	
+	protected void onResume(){
+		
+	    String action = getIntent().getAction();
+	    // Prevent endless loop by adding a unique action, don't restart if action is present
+	    if(action == null || !action.equals("Already created")) {
+		
+	        Log.v("Example", "Force restart");
+	        Intent intent = new Intent(this, MainActivity.class);
+	        startActivity(intent);
+	        finish();
+	    }
+	    // Remove the unique action so the next time onResume is called it will restart
+	    else
+	        getIntent().setAction(null);
+
+	    super.onResume();
+		
 	}
 	/**
 	 * This method checks services state, and configure MainActivity layout to be displayed accordingly.
@@ -151,11 +178,17 @@ public class MainActivity extends FragmentActivity {
     private void checkServices() {
         TextView TVGeo=(TextView)findViewById(R.id.tv_geo_footer);
         TextView TVAlerts=(TextView)findViewById(R.id.tv_alerts_footer);
-        	    
-	    //Comprobamos si el servicio GEO esta iniciado
+        
+        
 	    Intent myIntent = new Intent(this, GeopositioningService.class);
         pendingGeoIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
-        if (pendingGeoIntent == null) {
+        myIntent = new Intent(this, NotificationService.class);
+        pendingAlertsIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+        
+        
+	    //Comprobamos si el servicio GEO esta iniciado
+
+        if (!isGEORunning()) {
         	TVGeo.setTextColor(this.getResources().getColor(R.color.Red));
         	TVGeo.setText(R.string.geo_off);
         	GeoEnabled = false;
@@ -166,9 +199,7 @@ public class MainActivity extends FragmentActivity {
         }	
         
 	    //Comprobamos si el servicio Alerts esta  iniciado
-	    myIntent = new Intent(this, NotificationService.class);
-	    pendingAlertsIntent = PendingIntent.getService(this, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
-        if (pendingAlertsIntent == null) {
+        if (!isALERTSRunning()) {
         	TVAlerts.setTextColor(this.getResources().getColor(R.color.Red));
         	TVAlerts.setText(R.string.alerts_off);
         	AlertsEnabled = false;
@@ -179,6 +210,26 @@ public class MainActivity extends FragmentActivity {
         }
 		
 	}
+    
+    private boolean isGEORunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (GeopositioningService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean isALERTSRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (NotificationService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 	public void onTvGeoFooterClick(View v) {
 		
@@ -255,8 +306,11 @@ public class MainActivity extends FragmentActivity {
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 		alarmManager.cancel(pendingGeoIntent);
         pendingGeoIntent = null;        
-		
-        Toast.makeText(this, getString(R.string.stopped_geo_service), Toast.LENGTH_LONG).show();
+        
+        Intent i = new Intent(this, GeopositioningService.class);
+        MainActivity.this.stopService(i);
+        
+        //Toast.makeText(this, getString(R.string.stopped_geo_service), Toast.LENGTH_LONG).show();
 	}
 	
 	private Boolean isGPSorNetworkEnabled() {
@@ -318,7 +372,9 @@ public class MainActivity extends FragmentActivity {
         alarmManager.cancel(pendingAlertsIntent);
         pendingAlertsIntent = null;        
 		
-        Toast.makeText(this, getString(R.string.stopped_alerts_service), Toast.LENGTH_LONG).show();
+        Intent i = new Intent(this, NotificationService.class);
+        MainActivity.this.stopService(i);
+        
 	}
 	
 	//End region Alerts

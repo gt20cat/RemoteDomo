@@ -319,7 +319,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL("CREATE TABLE " + T_DEVICES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, url TEXT not null unique, usr TEXT, pwd TEXT,locationId int, odTypeId int)");
 			db.execSQL("CREATE TABLE " + T_ODDEVICETYPES + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");	
 			db.execSQL("CREATE TABLE " + T_LOCATIONS + " (id INTEGER PRIMARY KEY, name TEXT not null unique, description TEXT)");
-			db.execSQL("CREATE TABLE " + T_EVENTS + " (id INTEGER PRIMARY KEY, time TEXT not null, transmitter TEXT not null, type TEXT not null, message TEXT not null,read int)");
+			db.execSQL("CREATE TABLE " + T_EVENTS + " (id INTEGER PRIMARY KEY,day not null, time TEXT not null, transmitter TEXT not null, type TEXT not null, message TEXT not null,read int)");
 			db.execSQL("CREATE TABLE " + T_SERVICES + " (id INTEGER PRIMARY KEY, description TEXT not null, minutes int not null, locationId int not null)");
 
 			db.execSQL("INSERT INTO " + T_ODDEVICETYPES + " (id, name, description) VALUES(1,'ODNetwork','')");
@@ -494,6 +494,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			SQLiteDatabase db = this.getWritableDatabase();
 			
 			ContentValues values = new ContentValues();
+			values.put("day", event.getDay());
 			values.put("time", event.getTime());
 			values.put("transmitter", event.getTransmitter());
 			values.put("type", event.getType());
@@ -510,8 +511,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			SQLiteDatabase db = this.getReadableDatabase();
 
-			String selectQuery = "SELECT id  FROM " + T_EVENTS + " WHERE "
-					+ "time = '" + event.getTime() + "' and transmitter = '" + event.getTransmitter() +
+			String selectQuery = "SELECT id  FROM " + T_EVENTS + " WHERE " + "day = '" + event.getDay()  +
+					"' and time = '" + event.getTime() + "' and transmitter = '" + event.getTransmitter() +
 					"' and type = '" + event.getType() + "' and message = '" + event.getMessage() + "'";
 			
 		    Cursor cursor = db.rawQuery(selectQuery,null);
@@ -531,17 +532,64 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			SQLiteDatabase db = this.getReadableDatabase();
 			List<EventCategory> list = new ArrayList<EventCategory>();
 
-			Cursor cursor = db.query(T_EVENTS, new String[] { "count(id)","transmitter" },
-					"read = 0", null, "transmitter", null, "transmitter ASC"); 
-
-			/*Cursor cursor2 = db.query(T_EVENTS, new String[] { "sum(id)","name" },
-					"read = 1", null, "name", null, "name ASC"); */
+			/*Cursor cursor = db.query(T_EVENTS, new String[] { "count(id)","transmitter" },
+					"read = 0", null, "transmitter", null, "transmitter ASC"); */
+			
+			Cursor cursor = db.query(T_EVENTS, new String[] {"transmitter,sum(CASE WHEN read = 1 THEN 1 END) as read , sum(CASE WHEN read = 0 THEN 1 END) as unread" },
+			null, null, "transmitter", null, "transmitter ASC"); 
 		
+			int x=0;
+			if (cursor.moveToFirst()) {
+				do {
+					EventCategory b1 = new EventCategory(cursor.getString(0),cursor.getInt(1),cursor.getInt(2));
+
+					list.add(b1);
+
+					x=x+1;
+				} while (cursor.moveToNext());
+			}
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			} 
+			cursor.close();
+			
+			return list;
+			
+		}
+		
+		public int getUnreadAlerts() {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+			
+			Cursor cursor = db.query(T_EVENTS, new String[] {"count(*)" },
+					"read = 0", null, null, null, null); 
+		
+		    if (!cursor.moveToFirst())
+		    {
+		    	cursor.close();
+		        return 0;
+		    }
+		    int alertsUnread = cursor.getInt(0);
+		    cursor.close();
+			
+		    return alertsUnread;
+			
+		}
+		
+
+		public List<Event> selectActivityByCategory(String category) {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+			List<Event> list = new ArrayList<Event>();
+
+			Cursor cursor = db.query(T_EVENTS, new String[] { "id","day","time","transmitter","type","message","read" },
+					"transmitter like '" + category+"'", null, null, null, "day,time"); 
+			
 			int x=0;
 			if (cursor.moveToFirst()) {
 				//cursor2.moveToFirst();
 				do {
-					EventCategory b1 = new EventCategory(cursor.getString(1),0,cursor.getInt(0));
+					Event b1 = new Event(cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getInt(6));
 
 					list.add(b1);
 
@@ -555,6 +603,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			cursor.close();
 			
 			return list;
+			
+		}
+
+		public void deleteAlertsAll() {
+			
+			SQLiteDatabase db = this.getReadableDatabase();
+			db.execSQL("delete from "+ T_EVENTS);
+			
+		}
+
+		public void markAsReadAlertsAll() {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+			
+			ContentValues args = new ContentValues();
+			args.put("read", 1);
+			int c =  db.update(T_EVENTS, args, " read = 0 ", null);
+
+		}
+
+		public void markActivityReadByCategory(String category) {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+			
+			ContentValues args = new ContentValues();
+			args.put("read", 1);
+			int c =  db.update(T_EVENTS, args, " transmitter = '"+category+"' ", null);
+			
+		}
+
+		public void deleteAlertsByCategory(String category) {
+
+			SQLiteDatabase db = this.getReadableDatabase();
+			db.execSQL("delete from "+ T_EVENTS + " where transmitter like '"+category+"'");
 			
 		}
 		
