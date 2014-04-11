@@ -1,0 +1,2 @@
+This RemDo release includes all functionalities, but should be deeply tested before be considered stable.
+This RemDo release  can be unstable and could cause crashes or data loss, should not be used for production purposes.
