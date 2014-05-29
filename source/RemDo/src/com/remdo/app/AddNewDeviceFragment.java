@@ -1,6 +1,6 @@
 /* ************************************************************************  
  * RemoteDomo is an Android native application to remotely control domotics systems
- * Copyright © 2013 Gerard Torrents Vinaixa
+ * Copyright © 2014 Gerard Torrents Vinaixa
  *  
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 package com.remdo.app;
 
 import com.remdo.app.R;
-import com.remdo.app.R.string;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;

@@ -1,0 +1,7 @@
+com.opendomo.notifier
+com.opendomo.utilities
+com.remdo.adapters
+com.remdo.app
+remdo.services
+remdo.sqlite.helper
+remdo.sqlite.model

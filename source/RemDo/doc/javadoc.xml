@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="C:\Users\GerardT\workspace\RemDo" default="doc" name="api docs">
+<target name="doc" description="my docs">
+<javadoc destdir="C:\Users\GerardT\workspace\RemDo\doc" doctitle="Testing the Title" verbose="on" 
+    use="true" 
+    classpath="F:\android SDK and eclipse\android-sdk-windows\platforms\android-10\android.jar;C:\Users\workspace\fm\libs
+
+\android-query-full.0.22.10.jar;C:\Users\workspace\fm\libs\commons-httpclient-3.0.1.jar;C:\Users\workspace\fm\libs\gcm.jar;C:\Users\workspace\fm\libs\httpmime-4.1.jar;F:\android SDK and eclipse\android-sdk-windows\add-ons
+
+\addon_google_apis_google_inc_8\libs\maps.jar"  
+    sourcepath="C:\Users\GerardT\workspace\RemDo\src;C:\Users\GerardT\workspace\RemDo\gen"
+
+    linkoffline="http://d.android.com/reference F:\android SDK and eclipse\android-sdk-windows\docs\reference"
+    stylesheetfile="F:\android SDK and eclipse\android-sdk-windows\docs\assets\android-developer-docs.css"
+    >
+</javadoc>
+</target>
+</project>

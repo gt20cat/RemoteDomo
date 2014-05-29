@@ -253,6 +253,7 @@ public class NotificationService extends Service {
   	}
   	
   	public void saveNotifications (EventsList events) {
+		try {
   		dm = new DatabaseHelper(getApplicationContext());
    		Iterator<Event> iter = events.getIterator();
   		int notif= 0;
@@ -265,6 +266,11 @@ public class NotificationService extends Service {
   			}
   		}
    		if (notif > 0) displayNotification();
+		}
+		catch(Exception ex)
+		{
+			Toast.makeText(getApplicationContext(), "RemDo ERROR: [" + ex.getMessage() + "][" + ex.getStackTrace() +"]", Toast.LENGTH_LONG).show();		
+		}
   	}
   	
   	
