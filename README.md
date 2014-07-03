@@ -6,6 +6,6 @@ RemoteDomo is primarily designed to interact with [OpenDomo] (http://en.opendomo
 
 In it first version the goal is to offer login, alerts and geo utilities
 
-[Video demo] (www.youtube.com/embed/v-he2YUcUaU)
+[Video demo] (http://www.youtube.com/embed/v-he2YUcUaU)
 
 
